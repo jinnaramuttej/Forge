@@ -1,7 +1,7 @@
 export async function callQwen(prompt: string, systemPrompt?: string): Promise<string> {
   const url = 'http://localhost:11434/api/generate';
   const model = 'qwen3:8b';
-  const timeoutMs = 120000; // 120 seconds
+  const timeoutMs = 600000; // 10 minutes
 
   const makeRequest = async (): Promise<string> => {
     const controller = new AbortController();
