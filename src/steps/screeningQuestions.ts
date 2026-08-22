@@ -9,6 +9,7 @@ export async function screeningQuestionsStep(
   marketData: MarketDataShort,
   jdContent: string
 ): Promise<string[]> {
+  console.log('[hiring] calling screening questions for role:', role);
   const motivationPrompt = marketData.position === 'below'
     ? "\nCRITICAL REQUIREMENT: Since the budget for this role is 'below' market rate, you MUST include at least one question explicitly probing the candidate's motivation, retention risk, and alignment with non-monetary perks (such as growth, learning, flexibility)."
     : "";
@@ -31,6 +32,7 @@ Format Example:
 
   const makeAttempt = async (): Promise<string[]> => {
     const qwenResponse = await callQwen(prompt, systemPrompt);
+    console.log('[hiring] screening questions qwen raw output:', qwenResponse);
     
     // Clean up potential markdown formatting
     const jsonStr = qwenResponse.replace(/```json/g, '').replace(/```/g, '').trim();
@@ -60,8 +62,14 @@ Format Example:
   try {
     return await makeAttempt();
   } catch (error) {
-    console.warn('screeningQuestionsStep: Validation failed on first attempt, retrying once...', (error as Error).message);
+    console.error('[hiring] ERROR in screening questions (attempt 1):', error);
+    console.warn('[hiring] screeningQuestionsStep: Validation failed on first attempt, retrying once...', (error as Error).message);
     // Retry once if validation or JSON parsing fails
-    return await makeAttempt();
+    try {
+      return await makeAttempt();
+    } catch (err2) {
+      console.error('[hiring] ERROR in screening questions (attempt 2):', err2);
+      throw err2;
+    }
   }
 }

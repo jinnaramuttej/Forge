@@ -77,4 +77,62 @@ router.get('/:id', async (req: Request, res: Response): Promise<void> => {
   }
 });
 
+router.patch('/:id/approve', async (req: Request, res: Response): Promise<void> => {
+  const { id } = req.params;
+  const { decision } = req.body;
+
+  if (decision !== 'approved' && decision !== 'rejected') {
+    res.status(400).json({ error: "decision must be 'approved' or 'rejected'" });
+    return;
+  }
+
+  try {
+    // Check if the job is 'done'
+    const { data: job, error: fetchError } = await supabase
+      .from('hiring_jobs')
+      .select('status')
+      .eq('id', id)
+      .single();
+
+    if (fetchError) {
+      if (fetchError.code === 'PGRST116') {
+        res.status(404).json({ error: 'Job not found' });
+      } else {
+        console.error('Error fetching job for approval:', fetchError);
+        res.status(500).json({ error: 'Database error' });
+      }
+      return;
+    }
+
+    if (job.status !== 'done') {
+      res.status(400).json({ error: `Cannot approve a job with status: ${job.status}. Job must be 'done'.` });
+      return;
+    }
+
+    // Update approval status
+    const updateData: any = { approval_status: decision };
+    if (decision === 'approved') {
+      updateData.approved_at = new Date().toISOString();
+    }
+
+    const { data: updatedJob, error: updateError } = await supabase
+      .from('hiring_jobs')
+      .update(updateData)
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (updateError) {
+      console.error('Error updating approval status:', updateError);
+      res.status(500).json({ error: 'Failed to update approval status' });
+      return;
+    }
+
+    res.status(200).json(updatedJob);
+  } catch (error) {
+    console.error('Server error during approval:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 export default router;

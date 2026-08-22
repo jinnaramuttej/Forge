@@ -14,6 +14,7 @@ export interface MarketData {
 }
 
 export async function draftJDStep(input: JobInput, marketData: MarketData): Promise<string> {
+  console.log('[hiring] calling draft JD for role:', input.role, 'with marketData:', marketData);
   const toneAdjustment = marketData.position === 'below'
     ? "Since our budget is 'below' market rate, aggressively emphasize flexibility, learning opportunities, growth potential, and non-monetary perks. Frame this as a high-growth opportunity for ambitious individuals."
     : "Use a standard, professional framing highlighting our competitive compensation, strong company stability, and solid career path.";
@@ -41,9 +42,10 @@ Instructions:
 
   try {
     const jdContent = await callQwen(prompt, systemPrompt);
+    console.log('[hiring] draftJD qwen raw output:', jdContent);
     return jdContent.trim();
   } catch (error) {
-    console.error('Error in draftJDStep:', error);
+    console.error('[hiring] ERROR in draft JD processing:', error);
     throw new Error('Failed to generate Job Description');
   }
 }
