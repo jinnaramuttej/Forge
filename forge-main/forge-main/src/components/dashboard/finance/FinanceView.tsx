@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, CheckCircle2, TrendingUp, Sparkles, ArrowUpRight } from 'lucide-react';
+import { Plus, CheckCircle2, TrendingUp, Sparkles, Activity, FileSpreadsheet, ShieldAlert, FileText } from 'lucide-react';
 import FinanceOverview from './FinanceOverview';
 import RunwayChart from './RunwayChart';
 import FinancialInsight from './FinancialInsight';
@@ -9,35 +9,25 @@ import AddSnapshotModal from './AddSnapshotModal';
 
 import { useForge } from '../../../context/ForgeContext';
 import { apiClient } from '../../../services/apiClient';
+import InvestorMemoModal from '../InvestorMemoModal';
 
 function AskFinanceBar({ updateFinanceSnapshot }: { updateFinanceSnapshot: any }) {
-  const [query, setQuery] = useState('');
-  const [isAsking, setIsAsking] = useState(false);
-  const [response, setResponse] = useState<string | null>(null);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [query, setQuery] = React.useState('');
+  const [response, setResponse] = React.useState<string | null>(null);
+  const [isAsking, setIsAsking] = React.useState(false);
+  const [errorMsg, setErrorMsg] = React.useState<string | null>(null);
 
   const handleAsk = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!query.trim()) return;
-    
     setIsAsking(true);
-    setErrorMsg(null);
     setResponse(null);
-    
+    setErrorMsg(null);
     try {
       const result = await apiClient.queryFinance(query);
-      
-      if (result.error) {
-        throw new Error(result.error);
-      }
-      
       setResponse(result.finalResponse || 'The finance agent processed your request.');
-      
-
-      
-      setQuery('');
+      if (result.snapshot) updateFinanceSnapshot(result.snapshot);
     } catch (err: any) {
-      console.error(err);
       setErrorMsg(err.message || 'Failed to query the finance agent.');
     } finally {
       setIsAsking(false);
@@ -45,39 +35,31 @@ function AskFinanceBar({ updateFinanceSnapshot }: { updateFinanceSnapshot: any }
   };
 
   return (
-    <div className="w-full max-w-2xl mt-6">
+    <div className="space-y-3">
       <form onSubmit={handleAsk} className="flex items-center gap-2 rounded-2xl border border-border/50 bg-surface/80 backdrop-blur-xl p-2 shadow-xl">
         <input
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Ask the finance agent a question (e.g., 'What is our Q3 burn rate?')"
-          className="flex-1 bg-transparent px-3 text-sm text-foreground focus:outline-none placeholder:text-foreground-faint"
+          className="flex-1 bg-transparent px-3 py-1.5 text-xs text-foreground placeholder:text-foreground-faint focus:outline-none"
         />
         <button
           type="submit"
           disabled={isAsking || !query.trim()}
-          className="inline-flex h-9 items-center justify-center rounded-xl bg-foreground px-4 text-xs font-medium text-background hover:bg-foreground/90 disabled:opacity-50 transition-colors"
+          className="inline-flex items-center gap-1.5 rounded-xl bg-foreground px-4 py-2 text-xs font-semibold text-background hover:bg-foreground/90 transition-all disabled:opacity-50"
         >
           {isAsking ? 'Asking...' : 'Ask'}
         </button>
       </form>
-
-      {errorMsg && (
-        <div className="mt-3 rounded-xl border border-red-500/20 bg-red-500/10 backdrop-blur-md p-3 text-xs text-red-500 shadow-sm">
-          {errorMsg}
+      {response && (
+        <div className="rounded-xl border border-border bg-background-alt px-4 py-3 text-xs text-foreground-soft leading-relaxed">
+          {response}
         </div>
       )}
-
-      {response && (
-        <div className="mt-3 rounded-xl border border-[var(--color-finance)]/30 bg-surface/80 backdrop-blur-xl p-4 text-sm text-foreground leading-relaxed shadow-lg">
-          <div className="flex items-center gap-2 mb-2">
-            <span className="h-1.5 w-1.5 rounded-full bg-[var(--color-finance)]" />
-            <span className="text-[0.68rem] font-medium uppercase tracking-[0.16em] text-foreground-faint">
-              Agent Response
-            </span>
-          </div>
-          {response}
+      {errorMsg && (
+        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-xs text-red-700">
+          {errorMsg}
         </div>
       )}
     </div>
@@ -87,6 +69,8 @@ function AskFinanceBar({ updateFinanceSnapshot }: { updateFinanceSnapshot: any }
 export default function FinanceView() {
   const { finance, updateFinanceSnapshot } = useForge();
   const [snapshotModalOpen, setSnapshotModalOpen] = useState(false);
+  const [investorMemoOpen, setInvestorMemoOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<'runway' | 'ledger' | 'insights'>('runway');
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const cash = finance.cash;
@@ -162,15 +146,15 @@ export default function FinanceView() {
   };
 
   return (
-    <div className="relative mx-auto max-w-7xl w-full px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-10 space-y-8">
+    <div className="relative mx-auto max-w-7xl w-full px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-10 space-y-7">
       {/* Toast Notification */}
       <AnimatePresence>
         {toastMessage && (
           <motion.div
-            initial={{ opacity: 0, y: -16 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -16 }}
-            className="fixed top-16 right-4 sm:right-8 z-50 flex items-center gap-2.5 rounded-xl border border-border bg-surface px-4 py-2.5 shadow-lg text-xs font-medium text-foreground"
+            exit={{ opacity: 0, y: 20 }}
+            className="fixed bottom-6 right-4 sm:right-8 z-50 flex items-center gap-2.5 rounded-2xl border border-border bg-surface px-4 py-3 shadow-2xl text-xs font-medium text-foreground ring-1 ring-foreground/10"
           >
             <CheckCircle2 className="h-4 w-4 text-[var(--color-finance)]" />
             <span>{toastMessage}</span>
@@ -181,33 +165,39 @@ export default function FinanceView() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-[0.16em] text-foreground-faint">
+          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-foreground-faint">
             <span className="h-1.5 w-1.5 rounded-full bg-[var(--color-finance)]" />
             <span>01 · Operations</span>
           </div>
           <h1 className="mt-1 font-display text-3xl sm:text-4xl text-foreground font-medium tracking-tight">
-            Finance
+            Finance & Treasury
           </h1>
           <p className="mt-1 text-sm sm:text-base text-foreground-soft font-normal">
-            A clear view of your company's financial health.
+            Real-time runway modeling, bank reconciliation, and cash forecast.
           </p>
         </div>
 
-        {/* Contextual Action */}
-        <div className="flex items-center gap-3">
+        {/* Contextual Actions */}
+        <div className="flex items-center gap-2.5">
+          <button
+            onClick={() => setInvestorMemoOpen(true)}
+            className="inline-flex items-center gap-1.5 rounded-xl border border-border bg-surface px-3.5 py-2 text-xs font-semibold text-foreground hover:bg-foreground hover:text-background transition-all shadow-xs cursor-pointer"
+          >
+            <FileText className="h-3.5 w-3.5 text-foreground-soft" />
+            <span>Export Memo</span>
+          </button>
+
           <button
             onClick={() => setSnapshotModalOpen(true)}
-            className="inline-flex items-center gap-1.5 rounded-full bg-foreground px-4 py-2 text-xs font-medium text-background hover:bg-foreground/90 transition-all duration-150 shadow-2xs cursor-pointer"
+            className="inline-flex items-center gap-1.5 rounded-xl bg-foreground px-4 py-2 text-xs font-semibold text-background hover:bg-foreground/90 transition-all duration-150 shadow-xs cursor-pointer"
           >
             <Plus className="h-3.5 w-3.5" />
-            <span>Add financial snapshot</span>
+            <span>Update Snapshot</span>
           </button>
         </div>
       </div>
 
-      <AskFinanceBar updateFinanceSnapshot={updateFinanceSnapshot} />
-
-      {/* Financial Overview (4 Metrics) */}
+      {/* Financial Overview (Clean Borderless Metrics Ribbon) */}
       <FinanceOverview
         cash={cash}
         monthlyBurn={monthlyBurn}
@@ -215,29 +205,84 @@ export default function FinanceView() {
         monthlyRevenue={monthlyRevenue}
       />
 
-      {/* Runway Visualization Chart */}
-      <RunwayChart />
+      {/* Segmented Sub-Navigation Bar (Eliminates Box Clutter) */}
+      <div className="flex items-center justify-between border-b border-border/80 pb-2">
+        <div className="flex items-center gap-2">
+          {[
+            { id: 'runway', label: 'Runway & Forecast', icon: TrendingUp },
+            { id: 'ledger', label: 'Cash Ledger & Activity', icon: Activity },
+            { id: 'insights', label: 'Treasury Guardian', icon: Sparkles },
+          ].map((tab) => {
+            const Icon = tab.icon;
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id as any)}
+                className={`inline-flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all cursor-pointer ${
+                  isActive
+                    ? 'bg-foreground text-background shadow-xs'
+                    : 'text-foreground-soft hover:text-foreground hover:bg-foreground/[0.04]'
+                }`}
+              >
+                <Icon className="h-3.5 w-3.5" />
+                <span>{tab.label}</span>
+              </button>
+            );
+          })}
+        </div>
 
-      {/* Grid: Intelligent Insight & Activity + Editorial Illustration */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* Left column: Financial Insight & Illustration (7 cols) */}
-        <div className="lg:col-span-7 space-y-6">
+        <span className="text-[0.72rem] text-foreground-faint hidden sm:inline font-mono">
+          Last Synced: Today 10:42 AM
+        </span>
+      </div>
+
+      {/* Tabbed Views */}
+      {activeTab === 'runway' && (
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.2 }}
+          className="space-y-6"
+        >
+          <RunwayChart />
+          <AskFinanceBar updateFinanceSnapshot={updateFinanceSnapshot} />
+        </motion.div>
+      )}
+
+      {activeTab === 'ledger' && (
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.2 }}
+          className="space-y-6"
+        >
+          <FinanceActivity activities={activities} />
+        </motion.div>
+      )}
+
+      {activeTab === 'insights' && (
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.2 }}
+          className="space-y-6"
+        >
           <FinancialInsight />
 
-          {/* Editorial Illustration Card */}
-          <div className="rounded-2xl border border-border/70 bg-surface/35 p-5 sm:p-6 flex flex-col sm:flex-row items-center gap-5 overflow-hidden">
+          <div className="rounded-2xl border border-border/70 bg-surface/35 p-6 flex flex-col sm:flex-row items-center gap-5 overflow-hidden">
             <div className="w-24 sm:w-28 shrink-0 flex items-center justify-center">
               <img
                 src="/illustrations/finance-founder.png"
-                alt="Editorial hand-drawn illustration of founder contemplating company financial horizon"
-                className="w-full h-auto select-none opacity-90 transition-opacity hover:opacity-100"
+                alt="Founder contemplating financial horizon"
+                className="w-full h-auto select-none opacity-90"
                 draggable={false}
               />
             </div>
             <div className="min-w-0">
               <div className="flex items-center gap-2">
                 <span className="h-1.5 w-1.5 rounded-full bg-[var(--color-finance)]" />
-                <span className="text-[0.68rem] font-medium uppercase tracking-[0.16em] text-foreground-faint">
+                <span className="text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-foreground-faint">
                   Financial Clarity
                 </span>
               </div>
@@ -249,19 +294,20 @@ export default function FinanceView() {
               </p>
             </div>
           </div>
-        </div>
-
-        {/* Right column: Recent Financial Activity (5 cols) */}
-        <div className="lg:col-span-5">
-          <FinanceActivity activities={activities} />
-        </div>
-      </div>
+        </motion.div>
+      )}
 
       {/* Add Financial Snapshot Modal */}
       <AddSnapshotModal
         isOpen={snapshotModalOpen}
         onClose={() => setSnapshotModalOpen(false)}
         onSubmit={handleAddSnapshot}
+      />
+
+      {/* Investor Memo Generator Modal */}
+      <InvestorMemoModal
+        isOpen={investorMemoOpen}
+        onClose={() => setInvestorMemoOpen(false)}
       />
     </div>
   );
