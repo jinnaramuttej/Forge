@@ -1,0 +1,171 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,340;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,340;1,9..144,400;1,9..144,500&display=swap');
+@import url('https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&display=swap');
+@import "tailwindcss";
+
+/* ─── DESIGN TOKENS ─────────────────────────────────────────────────────── */
+@theme {
+  /* Typography */
+  --font-display: 'Fraunces', 'Iowan Old Style', Georgia, serif;
+  --font-sans: 'General Sans', 'Helvetica Neue', Arial, sans-serif;
+
+  /* Light-mode palette (defaults) — matches forge-work.vercel.app exactly */
+  --color-background: #f6f1e8;
+  --color-background-alt: #efe7d8;
+  --color-surface: #fcfaf4;
+  --color-foreground: #16130f;
+  --color-foreground-soft: #56504a;
+  --color-foreground-faint: #8a8378;
+  --color-border: #dcd2bf;
+
+  /* Brand accents */
+  --color-accent: #b8461f;
+  --color-accent-soft: #e7c9ae;
+  --color-finance: #52735a;
+  --color-hiring: #48647f;
+  --color-legal: #c17f3e;
+
+  /* Shadows */
+  --shadow-xs: 0 1px 2px 0 rgb(22 19 15 / 0.05);
+  --shadow-2xs: 0 1px 2px 0 rgb(22 19 15 / 0.08);
+}
+
+/* ─── BASE STYLES ────────────────────────────────────────────────────────── */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--color-foreground);
+  color: var(--color-background);
+}
+
+/* ─── DARK MODE ──────────────────────────────────────────────────────────── */
+/* Applied via .dark class on <html> element */
+.dark {
+  --color-background: #0d0d0c;
+  --color-background-alt: #121210;
+  --color-surface: #151514;
+  --color-foreground: #f6f1e8;
+  --color-foreground-soft: #a39b8d;
+  --color-foreground-faint: #5e584d;
+  --color-border: #2c2a26;
+  --color-accent: #d75528;
+  --color-accent-soft: #42352b;
+  --color-finance: #648d6e;
+  --color-hiring: #5b7e9f;
+  --color-legal: #de934b;
+}
+
+/* ─── TEXTURE UTILITIES ──────────────────────────────────────────────────── */
+
+/* subtle editorial dot-grid texture */
+.bg-dot-grid {
+  background-image: radial-gradient(circle, rgba(22, 19, 15, 0.14) 1px, transparent 1px);
+  background-size: 26px 26px;
+}
+
+/* fine paper grain for depth without gradients */
+.bg-grain {
+  position: relative;
+}
+.bg-grain::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.035;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* faint structural line-grid, used sparingly behind editorial compositions */
+.bg-fine-grid {
+  background-image:
+    linear-gradient(rgba(22, 19, 15, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(22, 19, 15, 0.06) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+
+/* liquid glass utility — matches forge-work.vercel.app exactly */
+.glass {
+  background: rgba(252, 250, 244, 0.65);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  border: 1px solid rgba(22, 19, 15, 0.08);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.40), 0 4px 20px -2px rgba(22, 19, 15, 0.06);
+}
+
+/* enhanced glass variants */
+.glass-liquid {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.75), rgba(252, 250, 244, 0.45));
+  backdrop-filter: blur(32px) saturate(180%);
+  -webkit-backdrop-filter: blur(32px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.60);
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.80), inset 0 -1px 1px rgba(22, 19, 15, 0.04), 0 12px 36px -4px rgba(22, 19, 15, 0.06);
+}
+
+.glass-pill {
+  background: rgba(252, 250, 244, 0.70);
+  backdrop-filter: blur(20px) saturate(170%);
+  -webkit-backdrop-filter: blur(20px) saturate(170%);
+  border: 1px solid rgba(255, 255, 255, 0.50);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.60), 0 2px 8px rgba(22, 19, 15, 0.05);
+}
+
+.glass-modal {
+  background: rgba(252, 250, 244, 0.88);
+  backdrop-filter: blur(36px) saturate(190%);
+  -webkit-backdrop-filter: blur(36px) saturate(190%);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.90), 0 24px 64px -12px rgba(22, 19, 15, 0.14);
+}
+
+/* dark mode glass variant */
+.dark .glass {
+  background: rgba(21, 21, 20, 0.65);
+  border: 1px solid rgba(246, 241, 232, 0.07);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.04), 0 4px 20px -2px rgba(0, 0, 0, 0.30);
+}
+
+.dark .glass-modal {
+  background: rgba(21, 21, 20, 0.90);
+  border: 1px solid rgba(246, 241, 232, 0.10);
+}
+
+
+/* ─── TYPOGRAPHY UTILITIES ───────────────────────────────────────────────── */
+.text-balance {
+  text-wrap: balance;
+}
+
+/* ─── SCROLLBAR UTILITIES ────────────────────────────────────────────────── */
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+}
+
+/* ─── ACCESSIBILITY ──────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
