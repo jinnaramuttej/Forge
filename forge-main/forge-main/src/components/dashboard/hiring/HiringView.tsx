@@ -19,7 +19,7 @@ export default function HiringView() {
   const [createRoleModalOpen, setCreateRoleModalOpen] = useState(false);
   const [reviewModalCandidate, setReviewModalCandidate] = useState<Candidate | null>(null);
 
-  const handleCreateRole = (roleData: Omit<Role, 'candidatesCount' | 'currentStage' | 'lastActivity'> & { id?: string }) => {
+  const handleCreateRole = (roleData: Omit<Role, 'id' | 'candidatesCount' | 'currentStage' | 'lastActivity'> & { id?: string }) => {
     addRole({
       ...roleData,
       candidatesCount: 0,
