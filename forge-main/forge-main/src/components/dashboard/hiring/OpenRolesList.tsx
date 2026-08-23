@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { ArrowRight, Users, ChevronRight } from 'lucide-react';
 import { Role } from './types';
 
@@ -41,27 +40,17 @@ export default function OpenRolesList({
       </div>
 
       {/* Roles List */}
-      <motion.div
-        initial="hidden"
-        animate="show"
-        variants={{
-          hidden: {},
-          show: { transition: { staggerChildren: 0.05 } }
-        }}
-        className="divide-y divide-border/60 rounded-2xl border border-border/70 bg-surface/50 overflow-hidden shadow-xs"
-      >
+      <div className="divide-y divide-border/60 rounded-2xl border border-border/70 bg-surface/50 overflow-hidden shadow-xs">
         {roles.map((role) => {
           const isSelected = selectedRoleId === role.id;
           return (
-            <motion.div
+            <div
               key={role.id}
               onClick={() => onSelectRole(isSelected ? null : role.id)}
-              variants={{ hidden: { opacity: 0, x: -8 }, show: { opacity: 1, x: 0 } }}
-              whileHover={{ x: 4, backgroundColor: 'rgba(var(--color-foreground-rgb), 0.02)' }}
-              className={`group flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 sm:p-5 cursor-pointer transition-colors duration-150 ${
+              className={`group flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 sm:p-5 cursor-pointer transition-all duration-150 ${
                 isSelected
                   ? 'bg-foreground/[0.04] border-l-2 border-l-[var(--color-hiring)]'
-                  : ''
+                  : 'hover:bg-surface'
               }`}
             >
               {/* Left info */}
@@ -95,10 +84,10 @@ export default function OpenRolesList({
                   }`}
                 />
               </div>
-            </motion.div>
+            </div>
           );
         })}
-      </motion.div>
+      </div>
     </section>
   );
 }
