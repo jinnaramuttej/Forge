@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, CheckCircle2, FileText, ArrowRight } from 'lucide-react';
+import { Plus, CheckCircle2, FileText, ArrowRight, ShieldCheck, Layers, Scale } from 'lucide-react';
 import LegalOverview from './LegalOverview';
 import DocumentList from './DocumentList';
 import DocumentPreview from './DocumentPreview';
@@ -100,46 +100,46 @@ const initialDocuments: LegalDocument[] = [
   },
   {
     id: 'doc-dpa-cloud',
-    title: 'Customer Data Processing Addendum (GDPR & CCPA)',
+    title: 'Enterprise Customer Data Processing Agreement (DPA)',
     type: 'Data Processing Agreement',
     category: 'Compliance',
-    status: 'Approved',
-    currentStep: 'complete',
-    counterparty: 'Enterprise Cloud Customer',
+    status: 'Draft',
+    currentStep: 'draft',
+    counterparty: 'Vanguard Data Systems',
     owner: 'Sarah Lin',
-    lastUpdated: 'Oct 19',
-    governingLaw: 'Delaware / EU GDPR',
-    effectiveDate: 'Oct 15, 2026',
-    summary: 'Standard SOC2/GDPR data processing agreement specifying subprocessor controls and encryption at rest.',
+    lastUpdated: 'Yesterday',
+    governingLaw: 'Delaware, USA',
+    effectiveDate: 'Oct 28, 2026',
+    summary: 'GDPR and CCPA compliant data processing addendum governing automated tenant isolation and telemetry data ingestion.',
     clauses: [
       {
-        title: 'Security & Encryption Measures',
-        content: 'All customer data encrypted using AES-256 at rest and TLS 1.3 in transit.',
+        title: 'Security Safeguards & Sub-processors',
+        content: 'Technical security controls and notice period for addition of sub-processors.',
       },
       {
-        title: 'Subprocessor Authorization',
-        content: '30-day notice requirement prior to onboarding new cloud hosting subprocessors.',
+        title: 'Data Subject Rights & Breach Notification',
+        content: '72-hour prompt incident notification protocol and data deletion support.',
       },
     ],
     riskRating: 'Clean',
   },
   {
-    id: 'doc-safe-advisor',
-    title: 'Technical Advisory Board Equity Agreement (FAST)',
-    type: 'Advisor Agreement',
+    id: 'doc-safe-angel',
+    title: 'Y Combinator Post-Money SAFE (Valuation Cap: $14M)',
+    type: 'SAFE Agreement',
     category: 'Corporate',
-    status: 'Approved',
+    status: 'Complete',
     currentStep: 'complete',
-    counterparty: 'Dr. Aris Thorne',
+    counterparty: 'Foundry Angel Syndicate',
     owner: 'Sarah Lin',
-    lastUpdated: 'Oct 12',
+    lastUpdated: 'Oct 20',
     governingLaw: 'Delaware, USA',
-    effectiveDate: 'Oct 01, 2026',
-    summary: 'Founder Institute standard FAST advisory agreement granting 0.25% advisor equity for monthly architecture reviews.',
+    effectiveDate: 'Oct 20, 2026',
+    summary: 'Executed $150K post-money SAFE instrument at $14M valuation cap. Funds wired and reconciled in company operating account.',
     clauses: [
       {
-        title: 'Advisory Commitment',
-        content: 'Quarterly board deep dives and 3 hours/month technical architecture consultation.',
+        title: 'Valuation Cap & Conversion Terms',
+        content: 'Post-money valuation cap of $14,000,000 USD converting at next equity financing round.',
       },
     ],
     riskRating: 'Clean',
@@ -149,53 +149,80 @@ const initialDocuments: LegalDocument[] = [
 import { useForge } from '../../../context/ForgeContext';
 
 export default function LegalView() {
-  const { legalDocuments: documents, addLegalDocument, signLegalDocument, addActivity, showToast } = useForge();
-  const [selectedDocId, setSelectedDocId] = useState<string | null>(documents[0]?.id || null);
+  const { addActivity, showToast } = useForge();
+  const [documents, setDocuments] = useState<LegalDocument[]>(initialDocuments);
+  const [selectedDocId, setSelectedDocId] = useState<string>(initialDocuments[0].id);
+  const [activeTab, setActiveTab] = useState<'contracts' | 'approvals' | 'compliance'>('contracts');
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [reviewModalDoc, setReviewModalDoc] = useState<LegalDocument | null>(null);
 
-  const selectedDoc = documents.find((d) => d.id === selectedDocId) || documents[0] || null;
+  const selectedDoc = documents.find((d) => d.id === selectedDocId) || documents[0];
 
-  const handleCreateDocument = (
-    docData: Omit<LegalDocument, 'id' | 'lastUpdated' | 'clauses' | 'riskRating'>
-  ) => {
-    addLegalDocument({
-      ...docData,
+  const handleCreateDocument = (newDocData: Omit<LegalDocument, 'id' | 'lastUpdated' | 'clauses' | 'riskRating'>) => {
+    const newDoc: LegalDocument = {
+      ...newDocData,
+      id: `doc-${Date.now()}`,
       lastUpdated: 'Just now',
       clauses: [
         {
-          title: 'Standard Protective Terms',
-          content: 'Governed by Delaware general corporate law with bilateral mutual consideration.',
+          title: 'Standard Terms & Warranties',
+          content: 'Mutual representations and warranties standard for Delaware governing law agreements.',
+        },
+        {
+          title: 'IP & Confidentiality Protection',
+          content: 'Comprehensive covenant protecting company trade secrets and work product.',
         },
       ],
       riskRating: 'Clean',
-    });
+    };
+
+    setDocuments([newDoc, ...documents]);
+    setSelectedDocId(newDoc.id);
+    addActivity('legal', 'Document generated', `Generated new ${newDoc.type} for ${newDoc.counterparty}.`);
+    showToast(`Created document: ${newDoc.title}`, 'success');
   };
 
   const handleApproveDocument = (docId: string, note?: string) => {
-    signLegalDocument(docId);
+    setDocuments((prev) =>
+      prev.map((d) => {
+        if (d.id === docId) {
+          const nextStep: ApprovalStep = d.currentStep === 'draft' ? 'review' : d.currentStep === 'review' ? 'approval' : 'complete';
+          const nextStatus: DocumentStatus = nextStep === 'complete' ? 'Complete' : 'Awaiting Review';
+          return { ...d, currentStep: nextStep, status: nextStatus, lastUpdated: 'Just now' };
+        }
+        return d;
+      })
+    );
+
+    const doc = documents.find((d) => d.id === docId);
+    addActivity('legal', 'Document signed & approved', `Executed agreement: ${doc?.title}.${note ? ` Note: "${note}"` : ''}`);
+    showToast(`Signed & executed: ${doc?.title}`, 'success');
   };
 
   const handleRejectDocument = (docId: string, reason?: string) => {
+    setDocuments((prev) =>
+      prev.map((d) => (d.id === docId ? { ...d, status: 'Draft', currentStep: 'draft', lastUpdated: 'Just now' } : d))
+    );
+
     const doc = documents.find((d) => d.id === docId);
     addActivity('legal', 'Document revisions requested', `Revisions requested for ${doc?.title}. Reason: ${reason || 'Redlines needed.'}`);
     showToast(`Redlines requested for: ${doc?.title}`, 'info');
   };
 
   return (
-    <div className="relative mx-auto max-w-7xl w-full px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-10 space-y-8">
+    <div className="relative mx-auto max-w-7xl w-full px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-10 space-y-7">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-[0.16em] text-foreground-faint">
+          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-foreground-faint">
             <span className="h-1.5 w-1.5 rounded-full bg-[var(--color-legal)]" />
             <span>03 · Governance</span>
           </div>
           <h1 className="mt-1 font-display text-3xl sm:text-4xl text-foreground font-medium tracking-tight">
-            Legal
+            Legal & Compliance
           </h1>
           <p className="mt-1 text-sm sm:text-base text-foreground-soft font-normal">
-            Keep important work moving.
+            Delaware agreements, IP protection, and SAFE governance.
           </p>
         </div>
 
@@ -203,15 +230,15 @@ export default function LegalView() {
         <div className="flex items-center gap-3">
           <button
             onClick={() => setCreateModalOpen(true)}
-            className="inline-flex items-center gap-1.5 rounded-full bg-foreground px-4 py-2 text-xs font-medium text-background hover:bg-foreground/90 transition-all duration-150 shadow-2xs cursor-pointer"
+            className="inline-flex items-center gap-1.5 rounded-xl bg-foreground px-4 py-2 text-xs font-semibold text-background hover:bg-foreground/90 transition-all duration-150 shadow-xs cursor-pointer"
           >
             <Plus className="h-3.5 w-3.5" />
-            <span>Create document</span>
+            <span>Draft Agreement</span>
           </button>
         </div>
       </div>
 
-      {/* Legal Overview Summary */}
+      {/* Legal Overview (Clean Metrics Ribbon) */}
       <LegalOverview
         activeCount={documents.length}
         awaitingReviewCount={documents.filter((d) => d.status === 'Awaiting Review').length}
@@ -219,47 +246,103 @@ export default function LegalView() {
         expiringSoonCount={2}
       />
 
-      {/* Documents List */}
-      <DocumentList
-        documents={documents}
-        selectedDocumentId={selectedDoc?.id || null}
-        onSelectDocument={(doc) => setSelectedDocId(doc.id)}
-      />
+      {/* Segmented Sub-Navigation Bar */}
+      <div className="flex items-center justify-between border-b border-border/80 pb-2">
+        <div className="flex items-center gap-2">
+          {[
+            { id: 'contracts', label: 'Active Contracts & Preview', icon: FileText },
+            { id: 'approvals', label: 'Execution & Workflow', icon: CheckCircle2 },
+            { id: 'compliance', label: 'Delaware Compliance', icon: ShieldCheck },
+          ].map((tab) => {
+            const Icon = tab.icon;
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id as any)}
+                className={`inline-flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all cursor-pointer ${
+                  isActive
+                    ? 'bg-foreground text-background shadow-xs'
+                    : 'text-foreground-soft hover:text-foreground hover:bg-foreground/[0.04]'
+                }`}
+              >
+                <Icon className="h-3.5 w-3.5" />
+                <span>{tab.label}</span>
+              </button>
+            );
+          })}
+        </div>
 
-      {/* Grid: Document Preview (Left 7 cols) & Flow + Insight + Illustration (Right 5 cols) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* Left Column: Paper-cut Layered Preview */}
-        <div className="lg:col-span-7 space-y-6">
+        <span className="text-[0.72rem] text-foreground-faint hidden sm:inline font-mono">
+          Jurisdiction: Delaware, USA
+        </span>
+      </div>
+
+      {/* Tab 1: Contracts & Document Preview */}
+      {activeTab === 'contracts' && (
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.2 }}
+          className="space-y-6"
+        >
+          {/* Documents List */}
+          <DocumentList
+            documents={documents}
+            selectedDocumentId={selectedDoc?.id || null}
+            onSelectDocument={(doc) => setSelectedDocId(doc.id)}
+          />
+
+          {/* Document Preview */}
           <DocumentPreview
             document={selectedDoc}
             onOpenReview={(doc) => setReviewModalDoc(doc)}
             onApprove={(id) => handleApproveDocument(id)}
             onReject={(id) => handleRejectDocument(id)}
           />
-        </div>
+        </motion.div>
+      )}
 
-        {/* Right Column: Approval Flow, Legal Insight & Hand-drawn Illustration */}
-        <div className="lg:col-span-5 space-y-6">
-          {/* Approval Step Flow */}
-          <ApprovalFlow currentStep={selectedDoc?.currentStep || 'review'} />
+      {/* Tab 2: Execution & Workflow */}
+      {activeTab === 'approvals' && (
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.2 }}
+          className="grid grid-cols-1 lg:grid-cols-12 gap-8"
+        >
+          <div className="lg:col-span-6 space-y-6">
+            <ApprovalFlow currentStep={selectedDoc?.currentStep || 'review'} />
+          </div>
+          <div className="lg:col-span-6 space-y-6">
+            <LegalInsight />
+          </div>
+        </motion.div>
+      )}
 
-          {/* Legal Intelligence Insight */}
+      {/* Tab 3: Delaware Compliance */}
+      {activeTab === 'compliance' && (
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.2 }}
+          className="space-y-6"
+        >
           <LegalInsight />
 
-          {/* Hand-drawn Editorial Illustration Card */}
-          <div className="rounded-2xl border border-border/70 bg-surface/35 p-5 sm:p-6 flex flex-col sm:flex-row items-center gap-5 overflow-hidden">
+          <div className="rounded-2xl border border-border/70 bg-surface/35 p-6 flex flex-col sm:flex-row items-center gap-5 overflow-hidden">
             <div className="w-28 sm:w-32 shrink-0 flex items-center justify-center">
               <img
                 src="/illustrations/legal-workflow.png"
-                alt="Hand-drawn editorial illustration of a founder reviewing legal documents at an uncluttered desk"
-                className="w-full h-auto select-none rounded-lg opacity-90 transition-opacity hover:opacity-100"
+                alt="Founder reviewing legal documents"
+                className="w-full h-auto select-none rounded-lg opacity-90"
                 draggable={false}
               />
             </div>
             <div className="min-w-0">
               <div className="flex items-center gap-2">
                 <span className="h-1.5 w-1.5 rounded-full bg-[var(--color-legal)]" />
-                <span className="text-[0.68rem] font-medium uppercase tracking-[0.16em] text-foreground-faint">
+                <span className="text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-foreground-faint">
                   Corporate Governance
                 </span>
               </div>
@@ -271,8 +354,8 @@ export default function LegalView() {
               </p>
             </div>
           </div>
-        </div>
-      </div>
+        </motion.div>
+      )}
 
       {/* Create Document Modal */}
       <CreateDocumentModal
