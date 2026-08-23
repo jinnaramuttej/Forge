@@ -1,5 +1,4 @@
-import { generateText } from 'ai';
-import { getModel } from '../model';
+import { callQwen } from '../lib/ollama';
 
 export async function draftNDAStep(role: string, businessType: string): Promise<string> {
   console.log(`[hiring] drafting NDA for ${role} at ${businessType}`);
@@ -13,12 +12,8 @@ The NDA should be professional, standard Delaware jurisdiction (or general), and
 4. No Obligation to Hire
 5. Term and Governing Law
 
-Output the NDA in clear Markdown format. Make it concise but legally sound (around 300-500 words). Do not include placeholders like "[Company Name]", instead use "the Company".`;
+Output the NDA in clear plain text format. Make it concise but legally sound (around 300-500 words). Do not include placeholders like "[Company Name]", instead use "the Company".`;
 
-  const { text } = await generateText({
-    model: getModel(),
-    prompt,
-  });
-
-  return text;
+  const result = await callQwen(prompt);
+  return result;
 }
