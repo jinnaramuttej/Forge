@@ -155,4 +155,22 @@ router.patch('/:id/approve', async (req: Request, res: Response): Promise<void> 
   }
 });
 
+
+// DEBUG: manually trigger candidate search + insert via Serper
+router.post('/debug/find-candidates', async (req: Request, res: Response): Promise<void> => {
+  const { role, location, job_id } = req.body;
+  if (!role || !location || !job_id) {
+    res.status(400).json({ error: 'role, location, and job_id are required' });
+    return;
+  }
+  try {
+    const { findCandidatesStep } = await import('../steps/findCandidates');
+    await findCandidatesStep(role, location, job_id);
+    const { data } = await supabase.from('candidates').select('*').eq('role_id', job_id);
+    res.status(200).json({ inserted: data?.length ?? 0, candidates: data });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 export default router;

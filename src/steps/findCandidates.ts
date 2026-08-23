@@ -1,11 +1,10 @@
 import { callQwen } from '../lib/ollama';
 import { supabase } from '../supabase';
 
-const serperApiKey = process.env.SERPER_API_KEY;
-
 export async function findCandidatesStep(role: string, location: string, jobId: string): Promise<void> {
   console.log(`[hiring] finding candidates for ${role} in ${location}`);
 
+  const serperApiKey = process.env.SERPER_API_KEY;
   if (!serperApiKey) {
     console.warn('SERPER_API_KEY is not set. Skipping candidate search.');
     return;

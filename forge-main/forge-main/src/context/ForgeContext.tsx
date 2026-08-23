@@ -1018,10 +1018,10 @@ export const ForgeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     showToast(`Candidate added: ${newCand.name}`);
   };
 
-  const addRole = (roleData: Omit<Role, 'id'>) => {
+  const addRole = (roleData: Omit<Role, 'id'> & { id?: string }) => {
     const newRole: Role = {
       ...roleData,
-      id: `role-${Date.now()}`,
+      id: roleData.id || `role-${Date.now()}`,
     };
     setRoles((prev) => [newRole, ...prev]);
     addActivity('hiring', 'Open role created', `${newRole.title} opened in ${newRole.department}.`);
