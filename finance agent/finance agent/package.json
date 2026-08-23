@@ -1,0 +1,32 @@
+{
+  "name": "finance-agent-backend",
+  "version": "1.0.0",
+  "description": "Autonomous AI Finance Manager Backend for startup founders - Track 1 The Agent Hub",
+  "main": "src/server.js",
+  "scripts": {
+    "dev": "node --watch-path=src src/server.js",
+    "start": "node src/server.js",
+    "inspect-data": "node scripts/inspectData.js",
+    "import-data": "node scripts/importData.js",
+    "test": "node --test tests/calculations.test.js tests/tools.test.js tests/memory.test.js tests/finance.test.js tests/agent.test.js tests/validation.test.js"
+  },
+  "keywords": [
+    "autonomous-agent",
+    "finance",
+    "langgraph",
+    "ollama",
+    "supabase",
+    "express"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@langchain/core": "^0.3.40",
+    "@langchain/langgraph": "^0.2.54",
+    "@supabase/supabase-js": "^2.49.1",
+    "cors": "^2.8.5",
+    "csv-parser": "^3.2.0",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2"
+  }
+}

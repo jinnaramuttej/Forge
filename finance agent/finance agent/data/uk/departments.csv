@@ -1,0 +1,5 @@
+id,company_id,name,code,target_headcount,cost_centre
+bd8f3edf-fe29-4d6d-8f42-073db7e968dc,dd6f7306-36ed-4c9f-9996-6c5ab35d6628,Directors,DIR,2,CC-DIR
+3decc130-cb62-4d72-96a7-910f6f7881c8,dd6f7306-36ed-4c9f-9996-6c5ab35d6628,Sales,SAL,4,CC-SAL
+12ba86e9-339b-469e-8dc1-d0d68e0b2594,dd6f7306-36ed-4c9f-9996-6c5ab35d6628,Warehouse,WAR,2,CC-WAR
+58e5cce2-db9b-4db9-9d45-337e5a1fef44,dd6f7306-36ed-4c9f-9996-6c5ab35d6628,Marketing,MAR,2,CC-MAR
