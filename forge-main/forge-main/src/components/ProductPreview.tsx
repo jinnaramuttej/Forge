@@ -139,19 +139,13 @@ export default function ProductPreview({ onEnterForge }: ProductPreviewProps = {
                   })}
                 </div>
 
-                {/* Workspace selector */}
-                <div className="mt-8 border-t border-foreground/[0.06] pt-5">
-                  <div className="text-[0.68rem] font-medium tracking-wide text-foreground-faint uppercase">
-                    Workspace
+                {/* Clean system indicator */}
+                <div className="mt-8 border-t border-foreground/[0.06] pt-4 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                    <span className="text-[0.72rem] text-foreground-soft font-medium">Online</span>
                   </div>
-                  <div className="mt-2 flex items-center gap-2">
-                    <span className="flex h-6 w-6 items-center justify-center rounded bg-foreground text-[0.6rem] font-medium text-background">
-                      A
-                    </span>
-                    <span className="text-[0.8rem] text-foreground-soft">
-                      Forge
-                    </span>
-                  </div>
+                  <span className="text-[0.65rem] font-mono text-foreground-faint">v1.0</span>
                 </div>
               </motion.div>
 
@@ -400,4 +394,3 @@ export default function ProductPreview({ onEnterForge }: ProductPreviewProps = {
     </section>
   );
 }
-

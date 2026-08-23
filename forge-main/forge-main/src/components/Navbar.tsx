@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowRight, Menu, X, Moon, Sun } from 'lucide-react';
+import { ArrowRight, Menu, X } from 'lucide-react';
 
 const navLinks = [
   { label: 'Product', href: '#product' },
@@ -15,29 +15,6 @@ interface NavbarProps {
 export default function Navbar({ onEnterForge }: NavbarProps = {}) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false);
-
-  useEffect(() => {
-    // Check initial state
-    const isDark = document.documentElement.classList.contains('dark') || 
-                   localStorage.getItem('forge-theme') === 'dark';
-    if (isDark) {
-      document.documentElement.classList.add('dark');
-      setIsDarkMode(true);
-    }
-  }, []);
-
-  const toggleDarkMode = () => {
-    if (isDarkMode) {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('forge-theme', 'light');
-      setIsDarkMode(false);
-    } else {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('forge-theme', 'dark');
-      setIsDarkMode(true);
-    }
-  };
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 16);
@@ -62,12 +39,7 @@ export default function Navbar({ onEnterForge }: NavbarProps = {}) {
         className="fixed top-4 left-1/2 z-50 w-[calc(100%-1.25rem)] max-w-3xl -translate-x-1/2 sm:top-6"
       >
         <div
-          className={`glass flex items-center justify-between gap-4 rounded-full px-4 py-2.5 transition-shadow duration-500 sm:px-6 sm:py-3 ${
-            scrolled ? 'shadow-[0_10px_34px_rgba(22,19,15,0.10)]' : 'shadow-none'
-          }`}
-          style={{
-            background: scrolled ? 'rgba(252, 250, 244, 0.82)' : 'rgba(252, 250, 244, 0.42)',
-          }}
+          className={`glass-liquid flex items-center justify-between gap-4 rounded-full px-4 py-2.5 transition-all duration-300 sm:px-6 sm:py-3`}
         >
           <a
             href="#top"
@@ -88,33 +60,19 @@ export default function Navbar({ onEnterForge }: NavbarProps = {}) {
             ))}
           </nav>
 
-          <div className="flex items-center gap-3">
-            <button
-              onClick={toggleDarkMode}
-              aria-label="Toggle Dark Mode"
-              className="hidden md:flex h-8 w-8 items-center justify-center rounded-full bg-foreground/[0.04] text-foreground-soft hover:bg-foreground/[0.08] hover:text-foreground transition-colors"
-            >
-              {isDarkMode ? (
-                <Sun className="h-4 w-4" strokeWidth={1.75} />
-              ) : (
-                <Moon className="h-4 w-4" strokeWidth={1.75} />
-              )}
-            </button>
-
-            <a
-              href="#enter"
-              onClick={(e) => {
-                if (onEnterForge) {
-                  e.preventDefault();
-                  onEnterForge();
-                }
-              }}
-              className="group hidden items-center gap-1.5 rounded-full bg-foreground px-4 py-2 text-sm text-background transition-colors duration-300 hover:bg-accent md:inline-flex"
-            >
-              Enter FORGE
-              <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5" />
-            </a>
-          </div>
+          <a
+            href="#enter"
+            onClick={(e) => {
+              if (onEnterForge) {
+                e.preventDefault();
+                onEnterForge();
+              }
+            }}
+            className="group hidden items-center gap-1.5 rounded-full bg-foreground px-4 py-2 text-sm text-background transition-colors duration-300 hover:bg-accent md:inline-flex"
+          >
+            Enter FORGE
+            <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5" />
+          </a>
 
           <button
             className="p-1 text-foreground md:hidden"

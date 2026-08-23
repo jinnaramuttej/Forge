@@ -104,26 +104,28 @@ export default function LoginPage({ onBack, onSuccess }: LoginPageProps) {
               transition={{ duration: 0.85, ease: easeOut, delay: 0.25 }}
               className="relative z-[4] p-4 flex flex-col items-center"
             >
-              <img
-                src="/illustrations/hero-founder.png"
-                alt="FORGE Founder in serene workspace"
-                className="w-[85%] max-w-[340px] select-none"
-                draggable={false}
-              />
+              <div className="relative group">
+                <img
+                  src="/illustrations/login-portal.png"
+                  alt="FORGE Secure Portal Access"
+                  className="w-[85%] max-w-[340px] select-none rounded-xl transition-transform duration-500 group-hover:scale-[1.02]"
+                  draggable={false}
+                />
+              </div>
 
               {/* Floating editorial tags */}
               <div className="mt-4 flex flex-wrap items-center justify-center gap-2.5">
-                <span className="glass inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[0.72rem] text-foreground-soft">
-                  <span className="h-1.5 w-1.5 rounded-full bg-[var(--color-finance)]" />
-                  Finance
+                <span className="glass inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[0.72rem] text-foreground-soft shadow-xs">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[var(--color-finance)] animate-pulse" />
+                  Live Runway
                 </span>
-                <span className="glass inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[0.72rem] text-foreground-soft">
+                <span className="glass inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[0.72rem] text-foreground-soft shadow-xs">
                   <span className="h-1.5 w-1.5 rounded-full bg-[var(--color-hiring)]" />
-                  Hiring
+                  Team Pipeline
                 </span>
-                <span className="glass inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[0.72rem] text-foreground-soft">
+                <span className="glass inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[0.72rem] text-foreground-soft shadow-xs">
                   <span className="h-1.5 w-1.5 rounded-full bg-[var(--color-legal)]" />
-                  Legal
+                  Delaware Vault
                 </span>
               </div>
             </motion.div>

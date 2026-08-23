@@ -74,7 +74,7 @@ function App() {
         <Hero onEnterForge={openLogin} />
         <Problem />
         <Introducing />
-        <OperatingSuite />
+        <OperatingSuite onEnterForge={openLogin} />
         <HowItWorks />
         <ProductPreview onEnterForge={openLogin} />
         <FinalCTA onEnterForge={openLogin} />

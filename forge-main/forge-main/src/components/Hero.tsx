@@ -33,8 +33,7 @@ export default function Hero({ onEnterForge }: HeroProps = {}) {
         <div className="flex flex-col justify-center lg:pr-6">
           <motion.div
             initial={{ opacity: 0, y: 14 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-50px' }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, ease: easeOut }}
             className="mb-7 flex items-center gap-3"
           >
@@ -47,8 +46,7 @@ export default function Hero({ onEnterForge }: HeroProps = {}) {
           <h1 className="font-display text-balance text-[2.75rem] leading-[1.04] tracking-[-0.01em] text-foreground sm:text-[3.6rem] lg:text-[4.35rem]">
             <motion.span
               initial={{ opacity: 0, y: 22 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-50px' }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, ease: easeOut, delay: 0.08 }}
               className="block"
             >
@@ -56,8 +54,7 @@ export default function Hero({ onEnterForge }: HeroProps = {}) {
             </motion.span>
             <motion.span
               initial={{ opacity: 0, y: 22 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-50px' }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, ease: easeOut, delay: 0.2 }}
               className="block italic text-foreground-soft"
             >
@@ -67,8 +64,7 @@ export default function Hero({ onEnterForge }: HeroProps = {}) {
 
           <motion.p
             initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-50px' }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, ease: easeOut, delay: 0.34 }}
             className="mt-7 max-w-md text-[1.05rem] leading-relaxed text-foreground-soft"
           >
@@ -79,8 +75,7 @@ export default function Hero({ onEnterForge }: HeroProps = {}) {
 
           <motion.div
             initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-50px' }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, ease: easeOut, delay: 0.46 }}
             className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-4"
           >
@@ -108,8 +103,7 @@ export default function Hero({ onEnterForge }: HeroProps = {}) {
 
           <motion.div
             initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true, margin: '-50px' }}
+            animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.65 }}
             className="mt-16 flex flex-wrap items-center gap-x-7 gap-y-3 border-t border-foreground/10 pt-6"
           >
@@ -134,8 +128,7 @@ export default function Hero({ onEnterForge }: HeroProps = {}) {
         <div className="relative flex items-center justify-center lg:justify-end">
           <motion.div
             initial={{ opacity: 0, scale: 0.96, y: 24 }}
-            whileInView={{ opacity: 1, scale: 1, y: 0 }}
-            viewport={{ once: true, margin: '-50px' }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ duration: 1, ease: easeOut, delay: 0.25 }}
             className="relative w-full max-w-[420px] sm:max-w-[480px] lg:max-w-[560px] lg:-mr-6"
           >
@@ -153,8 +146,7 @@ export default function Hero({ onEnterForge }: HeroProps = {}) {
               <motion.span
                 key={f.label}
                 initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-50px' }}
+                animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.8 + i * 0.15 }}
                 className={`glass absolute hidden items-center gap-1.5 rounded-full px-3 py-1.5 text-xs text-foreground-soft sm:inline-flex ${f.className}`}
               >
