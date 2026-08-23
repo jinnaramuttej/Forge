@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, Scale, Users, Megaphone, FileText, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, CheckCircle2 } from 'lucide-react';
 import { AttentionItem } from './types';
 
 interface NeedsAttentionProps {
@@ -13,33 +13,48 @@ export default function NeedsAttention({
   onReviewItem,
   onViewAllApprovals,
 }: NeedsAttentionProps) {
-  const getCategoryColor = (cat: AttentionItem['category']) => {
+  const getCategoryTheme = (cat: AttentionItem['category']) => {
     switch (cat) {
       case 'legal':
-        return 'var(--color-legal)';
+        return {
+          dot: 'var(--color-legal)',
+          badge: 'bg-indigo-500/10 text-indigo-700 border-indigo-500/20',
+        };
       case 'hiring':
-        return 'var(--color-hiring)';
+        return {
+          dot: 'var(--color-hiring)',
+          badge: 'bg-amber-500/10 text-amber-700 border-amber-500/20',
+        };
       case 'finance':
-        return 'var(--color-finance)';
+        return {
+          dot: 'var(--color-finance)',
+          badge: 'bg-emerald-500/10 text-emerald-700 border-emerald-500/20',
+        };
       case 'marketing':
-        return 'var(--color-accent)';
+        return {
+          dot: 'var(--color-accent)',
+          badge: 'bg-sky-500/10 text-sky-700 border-sky-500/20',
+        };
       default:
-        return 'var(--color-foreground)';
+        return {
+          dot: 'var(--color-foreground)',
+          badge: 'bg-foreground/[0.06] text-foreground border-border',
+        };
     }
   };
 
   return (
     <section aria-labelledby="needs-attention-heading" className="space-y-4">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between border-b border-border/80 pb-3">
         <div className="flex items-center gap-2.5">
           <h2
             id="needs-attention-heading"
-            className="font-display text-lg sm:text-xl font-medium tracking-tight text-foreground"
+            className="font-display text-xl font-medium tracking-tight text-foreground"
           >
             Needs Your Attention
           </h2>
-          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-foreground/[0.07] font-mono text-[0.68rem] font-medium text-foreground">
+          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-foreground/[0.08] font-mono text-[0.68rem] font-bold text-foreground">
             {items.length}
           </span>
         </div>
@@ -47,7 +62,7 @@ export default function NeedsAttention({
         {onViewAllApprovals && (
           <button
             onClick={onViewAllApprovals}
-            className="text-xs text-foreground-soft hover:text-foreground transition-colors inline-flex items-center gap-1 group"
+            className="text-xs text-foreground-soft hover:text-foreground transition-colors inline-flex items-center gap-1 group font-medium cursor-pointer"
           >
             <span>Approvals queue</span>
             <ArrowRight className="h-3 w-3 text-foreground-faint group-hover:translate-x-0.5 transition-transform" />
@@ -55,42 +70,42 @@ export default function NeedsAttention({
         )}
       </div>
 
-      {/* Action items list */}
+      {/* Action items list (Open Divider Style, Zero Box Cards) */}
       {items.length === 0 ? (
-        <div className="rounded-xl border border-border/70 bg-surface/40 p-8 text-center">
-          <CheckCircle2 className="mx-auto h-6 w-6 text-[var(--color-finance)]" />
-          <p className="mt-2 text-xs font-medium text-foreground">All caught up</p>
-          <p className="mt-0.5 text-[0.75rem] text-foreground-faint">
+        <div className="py-8 text-center">
+          <CheckCircle2 className="mx-auto h-6 w-6 text-emerald-700" />
+          <p className="mt-2 text-xs font-semibold text-foreground">All caught up</p>
+          <p className="mt-0.5 text-xs text-foreground-soft">
             No pending approvals or decisions required at this moment.
           </p>
         </div>
       ) : (
-        <div className="divide-y divide-border/60 rounded-xl border border-border/70 bg-surface/50 overflow-hidden shadow-xs">
+        <div className="divide-y divide-border/60">
           {items.map((item) => {
-            const categoryColor = getCategoryColor(item.category);
+            const theme = getCategoryTheme(item.category);
             return (
               <div
                 key={item.id}
-                className="group flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4.5 sm:p-5 hover:bg-surface transition-colors duration-150"
+                onClick={() => onReviewItem(item)}
+                className="group py-4 first:pt-0 last:pb-0 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-colors cursor-pointer"
               >
                 {/* Left info */}
-                <div className="flex items-start gap-3.5 min-w-0">
+                <div className="flex items-start gap-3 min-w-0">
                   <span
                     className="mt-1.5 h-2 w-2 rounded-full shrink-0"
-                    style={{ backgroundColor: categoryColor }}
+                    style={{ backgroundColor: theme.dot }}
                   />
                   <div className="min-w-0">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className="text-[0.7rem] font-medium uppercase tracking-[0.14em] text-foreground-faint">
+                    <div className="flex flex-wrap items-center gap-2 mb-1">
+                      <span className={`text-[0.65rem] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-md border ${theme.badge}`}>
                         {item.categoryLabel}
                       </span>
-                      <span className="text-foreground-faint/40">·</span>
-                      <span className="rounded-full bg-foreground/[0.05] px-2 py-0.5 text-[0.65rem] font-medium text-foreground-soft">
-                        {item.status}
+                      <span className="text-[0.7rem] text-foreground-faint font-mono">
+                        {item.timeAgo}
                       </span>
                     </div>
 
-                    <h3 className="mt-1 text-[0.92rem] font-medium text-foreground leading-snug">
+                    <h3 className="font-display text-base font-medium text-foreground tracking-tight group-hover:text-[var(--color-accent)] transition-colors">
                       {item.title}
                     </h3>
                     <p className="mt-0.5 text-xs text-foreground-soft leading-normal">
@@ -99,15 +114,11 @@ export default function NeedsAttention({
                   </div>
                 </div>
 
-                {/* Right Action */}
-                <div className="flex items-center justify-end shrink-0 sm:pl-4">
-                  <button
-                    onClick={() => onReviewItem(item)}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-border/80 bg-surface px-3.5 py-1.5 text-xs font-medium text-foreground hover:border-foreground/30 hover:bg-foreground hover:text-background transition-all duration-150 group/btn shadow-2xs"
-                  >
-                    <span>{item.actionLabel || 'Review'}</span>
-                    <ArrowRight className="h-3 w-3 text-foreground-faint group-hover/btn:text-background group-hover/btn:translate-x-0.5 transition-all" />
-                  </button>
+                {/* Right Action Button */}
+                <div className="flex items-center gap-2 shrink-0 sm:self-center pl-5 sm:pl-0">
+                  <span className="text-xs font-semibold text-foreground-soft bg-foreground/[0.04] px-3 py-1.5 rounded-xl border border-border group-hover:bg-foreground group-hover:text-background transition-all">
+                    Review & Decide →
+                  </span>
                 </div>
               </div>
             );

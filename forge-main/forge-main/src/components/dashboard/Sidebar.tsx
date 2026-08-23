@@ -86,18 +86,8 @@ export default function Sidebar({
           )}
         </div>
 
-        {/* Workspace pill */}
-        <div className="mt-5 mb-6 flex items-center justify-between rounded-lg border border-border/70 bg-surface/50 px-3 py-2">
-          <div className="flex items-center gap-2.5 min-w-0">
-            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded bg-foreground text-[0.65rem] font-medium text-background">
-              {startup.name.charAt(0)}
-            </span>
-            <span className="truncate text-xs font-medium text-foreground">
-              {startup.name}
-            </span>
-          </div>
-          <span className="h-1.5 w-1.5 rounded-full bg-emerald-700/80" title="Active workspace" />
-        </div>
+        {/* Divider / spacing */}
+        <div className="mt-4 mb-5 border-b border-border/50" />
 
         {/* Primary Navigation */}
         <div className="space-y-0.5">
