@@ -1,33 +1,38 @@
 export async function callQwen(prompt: string, systemPrompt?: string): Promise<string> {
-  const url = 'http://localhost:11434/api/generate';
-  const model = 'qwen3:8b';
-  const timeoutMs = 600000; // 10 minutes
+  const url = 'https://openrouter.ai/api/v1/chat/completions';
+  const model = 'meta-llama/llama-3.1-8b-instruct';
+  const timeoutMs = 60000; // 1 minute
 
   const makeRequest = async (): Promise<string> => {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), timeoutMs);
+
+    const messages = [];
+    if (systemPrompt) {
+      messages.push({ role: 'system', content: systemPrompt });
+    }
+    messages.push({ role: 'user', content: prompt });
 
     try {
       const response = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
         },
         body: JSON.stringify({
           model,
-          prompt,
-          system: systemPrompt,
-          stream: false,
+          messages,
         }),
         signal: controller.signal,
       });
 
       if (!response.ok) {
-        throw new Error(`Ollama API error: ${response.status} ${response.statusText}`);
+        throw new Error(`OpenRouter API error: ${response.status} ${response.statusText}`);
       }
 
       const data = await response.json();
-      return data.response;
+      return data.choices[0].message.content;
     } finally {
       clearTimeout(timeout);
     }
@@ -37,7 +42,6 @@ export async function callQwen(prompt: string, systemPrompt?: string): Promise<s
     return await makeRequest();
   } catch (error) {
     console.warn('callQwen: First attempt failed, retrying once...', error);
-    // Retry once on failure
     return await makeRequest();
   }
 }

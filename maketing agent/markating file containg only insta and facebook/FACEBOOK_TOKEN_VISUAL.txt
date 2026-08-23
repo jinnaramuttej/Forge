@@ -1,0 +1,105 @@
+═══════════════════════════════════════════════════════════════
+   GET FACEBOOK TOKEN - VISUAL GUIDE
+═══════════════════════════════════════════════════════════════
+
+STEP 1: OPEN THIS LINK
+───────────────────────
+https://developers.facebook.com/tools/explorer
+
+(Copy-paste into browser)
+
+STEP 2: YOU'LL SEE THIS
+───────────────────────
+┌─────────────────────────────────────────┐
+│ Facebook Graph API Explorer             │
+├─────────────────────────────────────────┤
+│                                         │
+│ [Select App] [Get Token] [Submit]      │
+│                                         │
+│ Access Token: EAACxxxx...xxxx [Copy]   │ ← YOUR TOKEN
+│                                         │
+│ Request URL: /me                        │
+│                                         │
+│ Response: {...your info...}             │
+│                                         │
+└─────────────────────────────────────────┘
+
+STEP 3: CLICK "Get Token"
+──────────────────────────
+[Get Token] ← Click this
+
+STEP 4: SELECT "User Token"
+────────────────────────────
+Choose: User Token (not Page Token)
+
+STEP 5: CHECK PERMISSIONS
+──────────────────────────
+☑ pages_manage_posts     (needed to post)
+☑ pages_read_user_generated_content
+
+STEP 6: GENERATE TOKEN
+──────────────────────
+Click: [Generate Access Token]
+
+STEP 7: COPY TOKEN
+──────────────────
+You'll see:
+Access Token: EAACxxxx...xxxx
+
+Click [Copy] or select all and copy
+
+Token looks like: EAAC1234567890abcdefg...
+
+STEP 8: ADD TO .env
+────────────────────
+Open: .env file
+
+Find this section:
+FACEBOOK_ACCESS_TOKEN=
+FACEBOOK_PAGE_ID=
+
+Change to:
+FACEBOOK_ACCESS_TOKEN=EAAC1234567890...
+FACEBOOK_PAGE_ID=123456789
+
+STEP 9: GET PAGE ID
+────────────────────
+Go to: https://lookup-id.com/
+
+Paste your Facebook profile/page URL
+
+It shows: Your ID is: 123456789
+
+Copy this number to FACEBOOK_PAGE_ID
+
+STEP 10: SAVE .env
+────────────────────
+Press: Ctrl+S
+
+STEP 11: DONE!
+──────────────
+Run: python instagram_api.py
+Open: http://localhost:5000/instagram.html
+Upload image
+Click "Post to All"
+✅ Posts to Instagram + Facebook!
+
+═══════════════════════════════════════════════════════════════
+
+QUICK REFERENCE:
+
+Token location: FACEBOOK_ACCESS_TOKEN=
+Page ID location: FACEBOOK_PAGE_ID=
+
+Token format: EAACxxxxxxxxxxxxxxxxxx (long string)
+Page ID format: 123456789 (numbers only)
+
+═══════════════════════════════════════════════════════════════
+
+IF YOU GET STUCK:
+1. Make sure you're at: developers.facebook.com/tools/explorer
+2. Not expired link ✓
+3. Token should start with: EAA or EAAC
+4. Page ID should be numbers only: 123456789
+
+═══════════════════════════════════════════════════════════════

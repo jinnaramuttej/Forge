@@ -5,6 +5,26 @@ import { orchestrateLegalDocument } from '../jobs/orchestrateLegalDocument';
 const router = Router();
 const ALLOWED_DOC_TYPES = ['nda', 'freelancer_agreement', 'offer_letter'];
 
+router.get('/', async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { data, error } = await supabase
+      .from('legal_documents')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Database error fetching legal docs:', error);
+      res.status(500).json({ error: 'Database error' });
+      return;
+    }
+
+    res.status(200).json(data);
+  } catch (error) {
+    console.error('Server error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 router.post('/generate', async (req: Request, res: Response): Promise<void> => {
   const { document_type, business_id, details } = req.body;
 

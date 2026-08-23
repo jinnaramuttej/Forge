@@ -4,6 +4,26 @@ import { orchestrateHiringJob } from '../jobs/orchestrateHiringJob';
 
 const router = Router();
 
+router.get('/', async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { data, error } = await supabase
+      .from('hiring_jobs')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Database error fetching jobs:', error);
+      res.status(500).json({ error: 'Database error' });
+      return;
+    }
+
+    res.status(200).json(data);
+  } catch (error) {
+    console.error('Server error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 router.post('/generate', async (req: Request, res: Response): Promise<void> => {
   const { role, business_type, budget, location, work_mode } = req.body;
 
@@ -57,7 +77,7 @@ router.get('/:id', async (req: Request, res: Response): Promise<void> => {
   try {
     const { data, error } = await supabase
       .from('hiring_jobs')
-      .select('id, status, error_message, market_data, jd_content, screening_questions, created_at')
+      .select('id, status, error_message, market_data, jd_content, screening_questions, nda_content, created_at')
       .eq('id', id)
       .single();
 

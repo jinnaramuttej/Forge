@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instagram AI - Post to Insta</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 30px;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.2);
+            max-width: 600px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            letter-spacing: -1px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px 30px;
+        }
+
+        .upload-area {
+            border: 3px dashed #667eea;
+            border-radius: 20px;
+            padding: 60px 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #f8f9ff;
+            margin-bottom: 30px;
+        }
+
+        .upload-area:hover {
+            background: #eef0ff;
+            border-color: #764ba2;
+        }
+
+        .upload-area.dragover {
+            background: #e8ecff;
+            border-color: #764ba2;
+            transform: scale(1.02);
+        }
+
+        .upload-icon {
+            font-size: 60px;
+            margin-bottom: 15px;
+        }
+
+        .upload-area p {
+            font-size: 16px;
+            font-weight: 600;
+            color: #0F172A;
+            margin-bottom: 5px;
+        }
+
+        .upload-area span {
+            font-size: 13px;
+            color: #475569;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .preview-container {
+            margin-bottom: 30px;
+            display: none;
+        }
+
+        .preview-container.show {
+            display: block;
+        }
+
+        .preview-image {
+            width: 100%;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            max-height: 300px;
+            object-fit: cover;
+        }
+
+        .caption-area {
+            margin-bottom: 20px;
+        }
+
+        .caption-area label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #0F172A;
+            display: block;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .caption-area textarea {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            font-size: 14px;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 100px;
+            transition: all 0.3s;
+        }
+
+        .caption-area textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .hashtag-suggestions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .hashtag-btn {
+            padding: 6px 12px;
+            background: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #475569;
+        }
+
+        .hashtag-btn:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #0F172A;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .status-message {
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .status-message.show {
+            display: block;
+        }
+
+        .status-message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status-message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .status-message.loading {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(0,0,0,.1);
+            border-radius: 50%;
+            border-top-color: currentColor;
+            animation: spin 1s linear infinite;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .char-count {
+            font-size: 12px;
+            color: #94A3B8;
+            margin-top: 5px;
+        }
+
+        .char-count.warning {
+            color: #f59e0b;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>📱 Social Media</h1>
+        <p>Upload image → Post to Instagram, Facebook & YouTube instantly</p>
+    </div>
+
+    <div class="content">
+        <!-- Status Message -->
+        <div class="status-message" id="statusMessage"></div>
+
+        <!-- Upload Area -->
+        <div class="upload-area" id="uploadArea">
+            <div class="upload-icon">📤</div>
+            <p>Upload Image</p>
+            <span>Drag & drop or click to select</span>
+            <input type="file" id="fileInput" class="file-input" accept="image/*">
+        </div>
+
+        <!-- Preview Container -->
+        <div class="preview-container" id="previewContainer">
+            <img id="previewImage" class="preview-image" alt="Preview">
+            
+            <!-- Caption Area -->
+            <div class="caption-area">
+                <label for="caption">Caption</label>
+                <textarea id="caption" placeholder="Write your caption..."></textarea>
+                <div class="char-count">
+                    <span id="charCount">0</span> / 2200 characters
+                </div>
+
+                <!-- Platform Selection -->
+                <div style="margin-top: 15px; padding: 15px; background: #f8f9ff; border-radius: 12px;">
+                    <label style="font-size: 12px; font-weight: 600; color: #0F172A; display: block; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px;">Post To:</label>
+                    <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                        <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                            <input type="checkbox" id="postInstagram" checked style="cursor: pointer;">
+                            <span style="font-size: 13px;">📸 Instagram</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                            <input type="checkbox" id="postFacebook" checked style="cursor: pointer;">
+                            <span style="font-size: 13px;">👥 Facebook</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                            <input type="checkbox" id="postYoutube" checked style="cursor: pointer;">
+                            <span style="font-size: 13px;">🎥 YouTube Shorts</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Hashtag Suggestions -->
+                <div class="hashtag-suggestions">
+                    <button class="hashtag-btn" onclick="addHashtag('#Photography')">#Photography</button>
+                    <button class="hashtag-btn" onclick="addHashtag('#InstaPost')">#InstaPost</button>
+                    <button class="hashtag-btn" onclick="addHashtag('#Instagram')">#Instagram</button>
+                    <button class="hashtag-btn" onclick="addHashtag('#AI')">#AI</button>
+                </div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="button-group">
+                <button class="btn btn-secondary" onclick="clearForm()">Cancel</button>
+                <button class="btn btn-primary" id="postBtn" onclick="postToSocialMedia()">📱 Post to All</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- AI Chat Bubble (Reuse from main.html) -->
+<div style="position: fixed; bottom: 30px; right: 30px; z-index: 9999;">
+    <div style="width: 70px; height: 70px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4); font-size: 28px; border: 3px solid white; animation: pulse-float 2s infinite;" onclick="alert('Chat coming soon!')">🤖</div>
+</div>
+
+<style>
+    @keyframes pulse-float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+    }
+</style>
+
+<script>
+let selectedFile = null;
+
+// Upload Area Events
+const uploadArea = document.getElementById('uploadArea');
+const fileInput = document.getElementById('fileInput');
+
+uploadArea.addEventListener('click', () => fileInput.click());
+
+uploadArea.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    uploadArea.classList.add('dragover');
+});
+
+uploadArea.addEventListener('dragleave', () => {
+    uploadArea.classList.remove('dragover');
+});
+
+uploadArea.addEventListener('drop', (e) => {
+    e.preventDefault();
+    uploadArea.classList.remove('dragover');
+    
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+        handleFileSelect(files[0]);
+    }
+});
+
+fileInput.addEventListener('change', (e) => {
+    if (e.target.files.length > 0) {
+        handleFileSelect(e.target.files[0]);
+    }
+});
+
+// Handle File Selection
+function handleFileSelect(file) {
+    if (!file.type.startsWith('image/')) {
+        showStatus('Please select a valid image file', 'error');
+        return;
+    }
+
+    selectedFile = file;
+    
+    // Show preview
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        document.getElementById('previewImage').src = e.target.result;
+        document.getElementById('previewContainer').classList.add('show');
+    };
+    reader.readAsDataURL(file);
+}
+
+// Caption Counter
+document.getElementById('caption').addEventListener('input', (e) => {
+    const count = e.target.value.length;
+    const charCountEl = document.getElementById('charCount');
+    charCountEl.textContent = count;
+    
+    if (count > 2000) {
+        charCountEl.parentElement.classList.add('warning');
+    } else {
+        charCountEl.parentElement.classList.remove('warning');
+    }
+});
+
+// Add Hashtag
+function addHashtag(hashtag) {
+    const captionEl = document.getElementById('caption');
+    if (captionEl.value) {
+        captionEl.value += ' ' + hashtag;
+    } else {
+        captionEl.value = hashtag;
+    }
+    
+    // Trigger input event to update counter
+    captionEl.dispatchEvent(new Event('input'));
+}
+
+// Clear Form
+function clearForm() {
+    selectedFile = null;
+    fileInput.value = '';
+    document.getElementById('caption').value = '';
+    document.getElementById('previewContainer').classList.remove('show');
+    document.getElementById('charCount').textContent = '0';
+    document.getElementById('statusMessage').classList.remove('show');
+}
+
+// Show Status
+function showStatus(message, type = 'loading') {
+    const statusEl = document.getElementById('statusMessage');
+    statusEl.textContent = type === 'loading' ? '⏳ ' + message : message;
+    statusEl.className = 'status-message show ' + type;
+}
+
+// Post to Social Media
+async function postToSocialMedia() {
+    if (!selectedFile) {
+        showStatus('Please select an image', 'error');
+        return;
+    }
+
+    const caption = document.getElementById('caption').value;
+    const postInstagram = document.getElementById('postInstagram').checked;
+    const postFacebook = document.getElementById('postFacebook').checked;
+    const postYoutube = document.getElementById('postYoutube').checked;
+
+    if (!postInstagram && !postFacebook && !postYoutube) {
+        showStatus('Select at least one platform', 'error');
+        return;
+    }
+
+    const postBtn = document.getElementById('postBtn');
+    postBtn.disabled = true;
+    
+    const platforms = [];
+    if (postInstagram) platforms.push('Instagram');
+    if (postFacebook) platforms.push('Facebook');
+    if (postYoutube) platforms.push('YouTube');
+    
+    showStatus(`📤 Posting to ${platforms.join(' & ')}... This may take 30-60 seconds`, 'loading');
+
+    try {
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+            const base64Image = e.target.result;
+
+            const response = await fetch('/api/post-to-social-media', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    image: base64Image,
+                    caption: caption,
+                    postInstagram: postInstagram,
+                    postFacebook: postFacebook,
+                    postYoutube: postYoutube
+                })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                showStatus('✅ ' + result.message, 'success');
+                setTimeout(() => {
+                    clearForm();
+                    postBtn.disabled = false;
+                }, 2000);
+            } else {
+                showStatus('❌ ' + result.message, 'error');
+                postBtn.disabled = false;
+            }
+        };
+        reader.readAsDataURL(selectedFile);
+
+    } catch (error) {
+        showStatus('❌ Error: ' + error.message, 'error');
+        postBtn.disabled = false;
+    }
+}
+</script>
+
+</body>
+</html>

@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { Role } from './types';
 import { apiClient } from '../../../services/apiClient';
+import { useForge } from '../../../context/ForgeContext';
 
 interface CreateRoleModalProps {
   isOpen: boolean;
@@ -87,6 +88,7 @@ export default function CreateRoleModal({
   const [location, setLocation] = useState('Hyderabad');
   const [workMode, setWorkMode] = useState<'onsite' | 'remote' | 'hybrid'>('onsite');
   const [pollingStatus, setPollingStatus] = useState<string | null>(null);
+  const { refreshCandidates } = useForge();
 
   if (!isOpen) return null;
 
@@ -126,6 +128,8 @@ export default function CreateRoleModal({
         targetDate,
         ...(result as any),
       });
+      setPollingStatus('Refreshing candidates pipeline...');
+      await refreshCandidates();
       setPollingStatus(null);
       onClose();
     } catch (err) {

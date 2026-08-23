@@ -1,0 +1,20 @@
+⚠️ IMPORTANT: Update Chrome to Version 150
+
+Your Chrome browser is version 149, but ChromeDriver needs version 150 for compatibility.
+
+Quick Fix:
+1. Open Google Chrome
+2. Click Menu (☰) → Settings
+3. Click "About Chrome" in left sidebar
+4. Chrome will automatically check for updates
+5. Click "Update" if available
+6. Restart Chrome after update completes
+
+Then try posting again!
+
+Alternatively, you can download Chrome 150 from: https://www.google.com/chrome
+
+After updating, restart Python:
+- Close your terminal
+- Open a new terminal
+- Run: python instagram_api.py

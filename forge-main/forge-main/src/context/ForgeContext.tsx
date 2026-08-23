@@ -635,6 +635,7 @@ export interface ForgeContextType extends ForgeState {
   markAllNotificationsAsRead: () => void;
   addActivity: (department: ActivityDepartment, action: string, description: string, actor?: string) => void;
   showToast: (message: string, type?: 'success' | 'info' | 'error') => void;
+  refreshCandidates: () => Promise<void>;
 }
 
 const ForgeContext = createContext<ForgeContextType | null>(null);
@@ -654,6 +655,31 @@ export const ForgeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [activities, setActivities] = useState<ActivityEvent[]>(initialActivities);
   const [notifications, setNotifications] = useState<NotificationItem[]>(initialNotifications);
   const [toast, setToast] = useState<{ message: string; type?: 'success' | 'info' | 'error' } | null>(null);
+
+  const refreshCandidates = async () => {
+    try {
+      const candidatesRes = await apiClient.getCandidates();
+      const fetchedCandidates: Candidate[] = candidatesRes.map((cand: any) => ({
+        id: cand.id,
+        name: cand.name,
+        roleId: cand.role_id,
+        roleTitle: cand.role_title,
+        stage: cand.stage as CandidateStage,
+        experience: cand.experience,
+        skills: cand.skills || [],
+        matchScore: cand.match_score,
+        matchReason: cand.match_reason,
+        lastActivity: cand.last_activity,
+        rating: cand.rating,
+        currentCompany: cand.current_company,
+        education: cand.education,
+        notes: cand.notes,
+      }));
+      setCandidates(fetchedCandidates);
+    } catch (err) {
+      console.error('Failed to refresh candidates:', err);
+    }
+  };
 
   // Supabase initial data load
   useEffect(() => {
@@ -681,6 +707,7 @@ export const ForgeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             targetDate: 'TBD',
             jd_content: job.jd_content,
             screening_questions: job.screening_questions,
+            nda_content: job.nda_content,
             market_data: job.market_data
           }));
           setRoles(fetchedRoles);
@@ -1149,6 +1176,7 @@ export const ForgeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     markAllNotificationsAsRead,
     addActivity,
     showToast,
+    refreshCandidates,
   };
 
   return <ForgeContext.Provider value={contextValue}>{children}</ForgeContext.Provider>;

@@ -1,0 +1,103 @@
+═══════════════════════════════════════════════════════════════
+   GET INSTAGRAM SESSION ID - 5 MINUTES
+═══════════════════════════════════════════════════════════════
+
+1. OPEN INSTAGRAM
+   Go to: https://instagram.com
+   Login: vlikith123456@gmail.com / komal@12
+
+2. OPEN DEVELOPER TOOLS
+   Press: F12 on keyboard
+   (Bottom of screen opens with blue DevTools panel)
+
+3. CLICK APPLICATION TAB
+   At top of DevTools, find tabs:
+   Console | Elements | Application ← CLICK THIS
+   
+4. FIND COOKIES
+   Left side of DevTools, find:
+   Storage
+   └─ Cookies
+      └─ https://www.instagram.com ← CLICK
+
+5. FIND SESSIONID
+   You'll see list of cookies with Name | Value columns
+   Look for: sessionid
+   
+   You'll see something like:
+   Name: sessionid
+   Value: 1234567890%3A1234567890%3AABCD...
+
+6. COPY THE VALUE
+   Click on the long Value string (starts with numbers)
+   Right-click → Copy
+   Or select all and Ctrl+C
+
+7. OPEN YOUR .env FILE
+   Location: c:\Users\likith\Downloads\jarvis-main\jarvis-main\.env
+   
+   Find this line:
+   INSTAGRAM_SESSION_ID=your_session_id
+   
+   Replace with your copied value:
+   INSTAGRAM_SESSION_ID=1234567890%3A1234567890%3AABCD...
+
+8. SAVE .env FILE
+   Ctrl+S
+
+9. RESTART SERVER
+   Close: python instagram_api.py (if running)
+   Run: RUN_INSTAGRAM.bat
+   
+   Or in terminal:
+   python instagram_api.py
+
+10. DONE! ✅
+    Open: http://localhost:5000/instagram.html
+    Upload image → Post to Instagram!
+
+═══════════════════════════════════════════════════════════════
+
+WHAT IT LOOKS LIKE IN BROWSER:
+
+┌─────────────────────────────────────────────┐
+│ F12 DEVTOOLS OPENS                          │
+├─────────────────────────────────────────────┤
+│ Console | Elements | Application | Network  │
+│                                             │
+│ LEFT SIDEBAR:                               │
+│ Storage                                     │
+│  └─ Cookies                                 │
+│     └─ https://www.instagram.com            │
+│                                             │
+│ MAIN AREA (Cookies List):                   │
+│ ┌────────────────┬─────────────────────────┐│
+│ │ Name           │ Value                   ││
+│ ├────────────────┼─────────────────────────┤│
+│ │ sessionid      │ 1234567890%3A1234...    ││ ← COPY THIS
+│ │ mid            │ ABC123DEF456...         ││
+│ │ ds_user_id     │ 987654321               ││
+│ └────────────────┴─────────────────────────┘│
+└─────────────────────────────────────────────┘
+
+═══════════════════════════════════════════════════════════════
+
+THEN IN .env FILE:
+
+Before:
+INSTAGRAM_SESSION_ID=your_session_id
+
+After:
+INSTAGRAM_SESSION_ID=1234567890%3A1234567890%3AABCDEFGH123456789
+
+═══════════════════════════════════════════════════════════════
+
+NEED HELP? 
+- Session ID should be ~100+ characters long
+- Should contain numbers and %3A (encoded colon)
+- Don't include quotes or spaces
+- Keep it private (don't share .env file)
+
+═══════════════════════════════════════════════════════════════
+
+READY? START NOW! 🚀

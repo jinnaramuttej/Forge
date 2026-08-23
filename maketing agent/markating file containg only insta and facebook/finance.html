@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Finance — HEY CEO OS</title>
+  <meta name="description" content="AI-powered financial overview, runway tracking, and budget management for your startup.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .finance-kpi-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:22px; }
+    @media (max-width:1100px) { .finance-kpi-grid { grid-template-columns:repeat(2,1fr); } }
+    @media (max-width:600px) { .finance-kpi-grid { grid-template-columns:1fr; } }
+    .fin-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--r); padding:22px; backdrop-filter:blur(18px); transition:var(--transition); position:relative; overflow:hidden; }
+    .fin-card:hover { border-color:var(--border-hover); box-shadow:var(--shadow-md); }
+    .fin-card .icon-bg { position:absolute; right:16px; top:16px; font-size:30px; opacity:.12; }
+    .fin-val { font-size:32px; font-weight:800; letter-spacing:-1px; margin-bottom:4px; }
+    .fin-lbl { font-size:12px; color:var(--text-3); font-weight:500; margin-bottom:8px; }
+    .fin-delta { font-size:12px; font-weight:700; display:flex; align-items:center; gap:4px; }
+    .runway-bar-wrap { margin:0 0 22px; }
+    .runway-track { height: 14px; background:rgba(255,255,255,.04); border-radius:100px; overflow:hidden; position:relative; margin:8px 0; }
+    .runway-fill { height:100%; background:linear-gradient(90deg,var(--green),var(--accent-3)); border-radius:100px; transition:width 1.5s ease; position:relative; }
+    .runway-fill::after { content:''; position:absolute; top:0; right:0; bottom:0; width:2px; background:rgba(255,255,255,.4); border-radius:1px; }
+    .runway-labels { display:flex; justify-content:space-between; font-size:11px; color:var(--text-3); }
+    .expense-table { width:100%; border-collapse:collapse; }
+    .expense-table th { text-align:left; padding:10px 14px; font-size:11px; font-weight:700; color:var(--text-3); text-transform:uppercase; letter-spacing:.6px; border-bottom:1px solid var(--border); background:rgba(255,255,255,.025); }
+    .expense-table td { padding:12px 14px; font-size:13px; border-bottom:1px solid rgba(255,255,255,.04); color:var(--text-2); }
+    .expense-table tr:hover td { background:rgba(255,255,255,.025); }
+    .expense-table td:first-child { font-weight:600; color:var(--text); }
+    .expense-table td:last-child { text-align:right; }
+    .cat-dot { width:8px; height:8px; border-radius:50%; display:inline-block; margin-right:6px; }
+    .budget-row { display:flex; align-items:center; gap:12px; margin-bottom:12px; }
+    .budget-label { width:120px; font-size:12px; color:var(--text-3); flex-shrink:0; }
+    .budget-track { flex:1; height:8px; background:rgba(255,255,255,.04); border-radius:100px; overflow:hidden; position:relative; }
+    .budget-fill { height:100%; border-radius:100px; transition:width 1.2s ease; }
+    .budget-spent { font-size:12px; color:var(--text); font-weight:700; flex-shrink:0; width:70px; text-align:right; }
+    .budget-total { font-size:11px; color:var(--text-3); flex-shrink:0; width:70px; text-align:right; }
+    .burn-alert { background:rgba(245,158,11,.08); border:1px solid rgba(245,158,11,.25); border-radius:var(--r-sm); padding:14px 16px; display:flex; align-items:center; gap:12px; margin-bottom:16px; }
+    .burn-alert .alert-icon { font-size:20px; flex-shrink:0; }
+    .burn-alert p { font-size:13px; color:var(--text-2); }
+    .ai-advice-list { display:flex; flex-direction:column; gap:8px; }
+    .ai-advice-item { display:flex; align-items:flex-start; gap:10px; padding:12px 14px; background:rgba(255,255,255,.025); border:1px solid var(--border); border-radius:var(--r-sm); }
+    .ai-advice-item .adv-icon { font-size:16px; flex-shrink:0; }
+    .ai-advice-item p { font-size:13px; color:var(--text-2); line-height:1.6; }
+  </style>
+</head>
+<body>
+
+<div class="glow-orb glow-orb-1"></div>
+<div class="glow-orb glow-orb-2"></div>
+<div class="glow-orb glow-orb-3"></div>
+<div class="grid-bg"></div>
+<div class="overlay" id="overlay"></div>
+
+<div class="app">
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-mark">HEY</div>
+    <div class="logo-text">
+      <h2>HEY OS</h2>
+      <p>AI CEO Platform</p>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Workspace</div>
+    <a href="main.html"      class="nav-item"><span class="nav-icon">🏠</span> Dashboard</a>
+    <a href="hiring.html"    class="nav-item"><span class="nav-icon">💼</span> Hiring</a>
+    <a href="documents.html" class="nav-item"><span class="nav-icon">📄</span> Documents</a>
+    <a href="analytics.html" class="nav-item"><span class="nav-icon">📈</span> Analytics</a>
+    <a href="finance.html"   class="nav-item active"><span class="nav-icon">💰</span> Finance</a>
+    <a href="team.html"      class="nav-item"><span class="nav-icon">👥</span> Team</a>
+    <a href="settings.html"  class="nav-item"><span class="nav-icon">⚙️</span> Settings</a>
+    <a href="login.html"     class="nav-item"><span class="nav-icon">🔑</span> Login</a>
+  </nav>
+  <div class="ai-status-card">
+    <div class="label">AI Provider</div>
+    <div class="provider-row">
+      <div class="provider-dot"></div>
+      <div>
+        <div class="provider-name">Groq (Primary)</div>
+        <div class="provider-sub">Ollama fallback ready</div>
+      </div>
+    </div>
+  </div>
+  <div class="sidebar-profile">
+    <img src="https://i.pravatar.cc/80?img=3" alt="Founder">
+    <div class="profile-info"><p>Asish Kumar</p><span>Founder &amp; CEO</span></div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-breadcrumb">HEY OS / <span>Finance</span></div>
+    </div>
+    <div class="topbar-right">
+      <button class="btn btn-gradient btn-sm" onclick="showToast('📊 Generating financial report…')">📊 Export Report</button>
+      <button class="icon-btn" title="Notifications">🔔<span class="notif-dot"></span></button>
+      <img src="https://i.pravatar.cc/80?img=3" style="width:34px;height:34px;border-radius:50%;cursor:pointer;" alt="Profile">
+    </div>
+  </div>
+
+  <div class="content">
+
+    <div style="margin-bottom:20px;">
+      <h1 style="font-size:26px;font-weight:800;letter-spacing:-.5px;margin-bottom:4px;">💰 Finance</h1>
+      <p style="color:var(--text-3);font-size:14px;">Real-time burn rate, runway tracking, and AI-powered budget intelligence.</p>
+    </div>
+
+    <!-- KPIs -->
+    <div class="finance-kpi-grid">
+      <div class="fin-card"><div class="icon-bg">💰</div><div class="fin-val gradient-text">₹2.4Cr</div><div class="fin-lbl">Cash Balance</div><div class="fin-delta up">↑ +₹12L this month</div></div>
+      <div class="fin-card"><div class="icon-bg">🔥</div><div class="fin-val" style="color:var(--red)">₹18L</div><div class="fin-lbl">Monthly Burn Rate</div><div class="fin-delta dn">↑ +₹1.4L vs last month</div></div>
+      <div class="fin-card"><div class="icon-bg">🏃</div><div class="fin-val" style="color:var(--accent-3)">13mo</div><div class="fin-lbl">Runway Remaining</div><div class="fin-delta up">At current burn rate</div></div>
+      <div class="fin-card"><div class="icon-bg">📈</div><div class="fin-val" style="color:var(--accent-amber)">₹48L</div><div class="fin-lbl">Total Raised (Seed)</div><div class="fin-delta up">Series A in planning</div></div>
+    </div>
+
+    <!-- Burn Alert -->
+    <div class="burn-alert">
+      <div class="alert-icon">⚠️</div>
+      <p><strong>Burn rate increased by 8.4%</strong> this month primarily due to 2 new engineering hires. AI projects runway of <strong>13 months</strong> — you should plan Series A raise within 8 months.</p>
+    </div>
+
+    <!-- Runway Bar -->
+    <div class="fin-card runway-bar-wrap">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+        <div style="font-size:14px;font-weight:700;">Runway Progress</div>
+        <div style="font-size:12px;color:var(--text-3);">13 of 18 months remaining</div>
+      </div>
+      <div class="runway-track">
+        <div class="runway-fill" id="runwayFill" style="width:0%"></div>
+      </div>
+      <div class="runway-labels">
+        <span>Seed Round (Jan 2026)</span>
+        <span style="color:var(--accent-amber);">← Raise target (Oct 2026)</span>
+        <span>Estimated out (Feb 2027)</span>
+      </div>
+    </div>
+
+    <!-- Two col: expenses + budget -->
+    <div class="two-col" style="gap:18px;margin-bottom:22px;">
+
+      <!-- Expense Breakdown -->
+      <div class="fin-card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+          <div><div style="font-size:14px;font-weight:700;">Monthly Expenses</div><div style="font-size:11px;color:var(--text-3);">July 2026</div></div>
+          <span style="font-size:20px;font-weight:800;color:var(--red)">₹18L</span>
+        </div>
+        <table class="expense-table">
+          <thead>
+            <tr><th>Category</th><th>Amount</th><th>% of Burn</th></tr>
+          </thead>
+          <tbody id="expenseTable"></tbody>
+        </table>
+      </div>
+
+      <!-- Budget Tracking -->
+      <div class="fin-card">
+        <div style="font-size:14px;font-weight:700;margin-bottom:16px;">Dept. Budget vs Actual</div>
+        <div id="budgetBars"></div>
+      </div>
+
+    </div>
+
+    <!-- AI Financial Advice -->
+    <div class="fin-card">
+      <div style="font-size:14px;font-weight:700;margin-bottom:14px;">🤖 AI Financial Intelligence</div>
+      <div class="ai-advice-list" id="aiAdvice"></div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+setTimeout(()=>{
+  document.getElementById('runwayFill').style.width = '72%';
+},300);
+
+const EXPENSES = [
+  { cat:"💼 Salaries", dot:"#6366f1", amount:"₹12,40,000", pct:69 },
+  { cat:"☁️ Cloud / Infra", dot:"#06d6a0", amount:"₹1,80,000", pct:10 },
+  { cat:"🛠️ SaaS Tools", dot:"#f59e0b", amount:"₹90,000", pct:5 },
+  { cat:"📣 Marketing", dot:"#f472b6", amount:"₹1,20,000", pct:7 },
+  { cat:"🏢 Office / Misc", dot:"₁ #3b82f6", dot:"#3b82f6", amount:"₹70,000", pct:4 },
+  { cat:"🎓 Learning Budget", dot:"#8b5cf6", amount:"₹90,000", pct:5 },
+];
+document.getElementById('expenseTable').innerHTML = EXPENSES.map(e=>`
+  <tr>
+    <td><span class="cat-dot" style="background:${e.dot}"></span>${e.cat}</td>
+    <td>${e.amount}</td>
+    <td>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div style="flex:1;height:4px;background:rgba(255,255,255,.06);border-radius:100px;overflow:hidden;min-width:60px;">
+          <div style="width:${e.pct}%;height:100%;background:${e.dot};border-radius:100px;"></div>
+        </div>
+        <span style="font-size:11px;font-weight:700;color:var(--text);min-width:26px;">${e.pct}%</span>
+      </div>
+    </td>
+  </tr>
+`).join('');
+
+const BUDGETS = [
+  { dept:"Engineering", spent:12.4, total:15, color:"#6366f1" },
+  { dept:"Product",     spent:2.1,  total:3,  color:"#06d6a0" },
+  { dept:"Marketing",   spent:1.2,  total:2.5,color:"#f472b6" },
+  { dept:"Design",      spent:0.8,  total:1.5,color:"#f59e0b" },
+  { dept:"Operations",  spent:1.5,  total:2,  color:"#ef4444" },
+];
+document.getElementById('budgetBars').innerHTML = BUDGETS.map(b=>{
+  const pct = Math.round((b.spent/b.total)*100);
+  return `<div class="budget-row">
+    <div class="budget-label">${b.dept}</div>
+    <div class="budget-track">
+      <div class="budget-fill" style="width:0%;background:${b.color};" id="bfill_${b.dept.replace(/\s/g,'_')}"></div>
+    </div>
+    <div class="budget-spent" style="color:${b.color}">₹${b.spent}L</div>
+    <div class="budget-total">/ ₹${b.total}L</div>
+  </div>`;
+}).join('');
+setTimeout(()=>BUDGETS.forEach(b=>{
+  const pct = Math.round((b.spent/b.total)*100);
+  const el = document.getElementById('bfill_'+b.dept.replace(/\s/g,'_'));
+  if(el) el.style.width = pct+'%';
+}),400);
+
+const ADVICE = [
+  { icon:'💡', text:'Engineering costs represent 69% of your burn. Consider moving 2 contractor roles to full-time to save ₹2.4L/mo in agency fees.' },
+  { icon:'📉', text:'Cloud costs grew 24% month-over-month. AI detected unused EC2 instances — shutting them down could save ₹40,000/mo.' },
+  { icon:'🎯', text:'At current burn, your Series A target of ₹8Cr will extend runway by 44 months. Recommend initiating investor conversations within 6 months.' },
+  { icon:'📊', text:'Learning budget is 100% utilized in Engineering but only 30% in Marketing. Consider rebalancing ₹50,000 to Marketing team upskilling.' },
+];
+document.getElementById('aiAdvice').innerHTML = ADVICE.map(a=>`
+  <div class="ai-advice-item">
+    <span class="adv-icon">${a.icon}</span>
+    <p>${a.text}</p>
+  </div>
+`).join('');
+
+function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.style.opacity='1'; t.style.transform='translateX(-50%) translateY(0)';
+    setTimeout(()=>{ t.style.opacity='0'; t.style.transform='translateX(-50%) translateY(80px)'; },2500);
+}
+</script>
+<script src="sidebar.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const navFinance = document.getElementById('nav-finance');
+    if(navFinance) navFinance.classList.add('active');
+    
+    // 3D Tilt Effect for Cards
+    const tiltCards = document.querySelectorAll('.card, .fin-card, .burn-alert, .ai-advice-item');
+    tiltCards.forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            const rotateX = ((y - centerY) / centerY) * -4;
+            const rotateY = ((x - centerX) / centerX) * 4;
+            card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(20px) scale(1.02)`;
+            card.style.boxShadow = 'var(--shadow-hover)';
+            card.style.background = 'var(--card-bg-hover)';
+        });
+        card.addEventListener('mouseleave', () => {
+            card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateZ(0) scale(1)';
+            card.style.boxShadow = '';
+            card.style.background = '';
+        });
+    });
+});
+</script>
+</body>
+</html>

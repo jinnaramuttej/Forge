@@ -1,0 +1,136 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,340;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,340;1,9..144,400;1,9..144,500&display=swap');
+@import url('https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  /* Typography */
+  --font-display: 'Fraunces', 'Iowan Old Style', Georgia, serif;
+  --font-sans: 'General Sans', 'Helvetica Neue', Arial, sans-serif;
+
+  /* Core palette — black, white, warm off-white */
+  --color-background: #F6F1E8;
+  --color-background-alt: #EFE7D8;
+  --color-surface: #FCFAF4;
+  --color-foreground: #16130F;
+  --color-foreground-soft: #56504A;
+  --color-foreground-faint: #8A8378;
+  --color-border: #DCD2BF;
+
+  /* Restrained functional accents */
+  --color-accent: #B8461F;
+  --color-accent-soft: #E7C9AE;
+  --color-finance: #52735A;
+  --color-hiring: #48647F;
+  --color-legal: #C17F3E;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--color-foreground);
+  color: var(--color-background);
+}
+
+/* subtle editorial dot-grid texture */
+.bg-dot-grid {
+  background-image: radial-gradient(circle, rgba(22, 19, 15, 0.14) 1px, transparent 1px);
+  background-size: 26px 26px;
+}
+
+/* fine paper grain for depth without gradients */
+.bg-grain {
+  position: relative;
+}
+.bg-grain::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.035;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+/* faint structural line-grid, used sparingly behind editorial compositions */
+.bg-fine-grid {
+  background-image:
+    linear-gradient(rgba(22, 19, 15, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(22, 19, 15, 0.06) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+
+/* Advanced Multi-Layer Liquid Glass Utilities */
+.glass {
+  background: rgba(252, 250, 244, 0.65);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  border: 1px solid rgba(22, 19, 15, 0.08);
+  box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.4), 0 4px 20px -2px rgba(22, 19, 15, 0.04);
+}
+
+.glass-liquid {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.75) 0%, rgba(252, 250, 244, 0.45) 100%);
+  backdrop-filter: blur(32px) saturate(180%);
+  -webkit-backdrop-filter: blur(32px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow:
+    inset 0 1px 2px 0 rgba(255, 255, 255, 0.8),
+    inset 0 -1px 1px 0 rgba(22, 19, 15, 0.04),
+    0 12px 36px -4px rgba(22, 19, 15, 0.06);
+}
+
+.glass-pill {
+  background: rgba(252, 250, 244, 0.7);
+  backdrop-filter: blur(20px) saturate(170%);
+  -webkit-backdrop-filter: blur(20px) saturate(170%);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.6), 0 2px 8px rgba(22, 19, 15, 0.03);
+}
+
+.glass-modal {
+  background: rgba(252, 250, 244, 0.88);
+  backdrop-filter: blur(36px) saturate(190%);
+  -webkit-backdrop-filter: blur(36px) saturate(190%);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  box-shadow:
+    inset 0 1px 2px 0 rgba(255, 255, 255, 0.9),
+    0 24px 64px -12px rgba(22, 19, 15, 0.14);
+}
+
+/* Print stylesheet for Investor Memos & Delaware Documents */
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  .print\:hidden {
+    display: none !important;
+  }
+
+  header, nav, footer, sidebar, aside, button {
+    display: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

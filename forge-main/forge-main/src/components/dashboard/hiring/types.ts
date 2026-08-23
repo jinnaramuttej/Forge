@@ -32,5 +32,6 @@ export interface Role {
   work_mode?: string;
   jd_content?: string;
   screening_questions?: string[];
+  nda_content?: string;
   market_data?: any;
 }

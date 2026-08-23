@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Check, ArrowRight, Building, GraduationCap, Sparkles, UserCheck } from 'lucide-react';
+import { X, Check, ArrowRight, Building, GraduationCap, Sparkles, UserCheck, FileText, HelpCircle } from 'lucide-react';
 import { Candidate } from './types';
+import { useForge } from '../../../context/ForgeContext';
 
 interface CandidateReviewModalProps {
   candidate: Candidate | null;
@@ -16,8 +17,10 @@ export default function CandidateReviewModal({
 }: CandidateReviewModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [offerNote, setOfferNote] = useState('');
-
+  const { roles } = useForge();
+  
   if (!candidate) return null;
+  const role = roles.find(r => r.id === candidate.roleId);
 
   const handleAction = (action: 'offer' | 'advance' | 'reject') => {
     setIsSubmitting(true);
@@ -118,6 +121,46 @@ export default function CandidateReviewModal({
                 ))}
               </div>
             </div>
+
+            {/* Candidate Resources (NDA & Questions) */}
+            {role && (role.nda_content || (role.screening_questions && role.screening_questions.length > 0)) && (
+              <div className="rounded-xl border border-[var(--color-hiring)]/30 bg-[var(--color-hiring)]/5 p-5">
+                <div className="flex items-center gap-2 mb-3">
+                  <Sparkles className="h-4 w-4 text-[var(--color-hiring)]" />
+                  <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-hiring)]">
+                    Auto-Drafted Candidate Resources
+                  </span>
+                </div>
+                
+                <div className="space-y-4">
+                  {role.screening_questions && role.screening_questions.length > 0 && (
+                    <div className="rounded-lg border border-border/60 bg-surface/80 p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <HelpCircle className="h-3.5 w-3.5 text-foreground-soft" />
+                        <span className="text-[0.72rem] font-medium text-foreground">Suggested Interview Questions</span>
+                      </div>
+                      <ul className="space-y-2 text-xs text-foreground-soft list-disc list-inside">
+                        {role.screening_questions.map((q, idx) => (
+                          <li key={idx} className="leading-relaxed">{q}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {role.nda_content && (
+                    <div className="rounded-lg border border-border/60 bg-surface/80 p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <FileText className="h-3.5 w-3.5 text-foreground-soft" />
+                        <span className="text-[0.72rem] font-medium text-foreground">Generated Non-Disclosure Agreement</span>
+                      </div>
+                      <div className="text-[0.7rem] font-mono text-foreground-soft whitespace-pre-wrap max-h-40 overflow-y-auto bg-background/50 p-3 rounded border border-border/30">
+                        {role.nda_content}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
 
             {/* Founder Note / Offer terms */}
             <div>

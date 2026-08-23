@@ -2,6 +2,8 @@ import { supabase } from '../supabase';
 import { marketCheckStep } from '../steps/marketCheck';
 import { draftJDStep, JobInput, MarketData } from '../steps/draftJD';
 import { screeningQuestionsStep } from '../steps/screeningQuestions';
+import { draftNDAStep } from '../steps/draftNDA';
+import { findCandidatesStep } from '../steps/findCandidates';
 
 export async function orchestrateHiringJob(jobId: string, input: JobInput): Promise<void> {
   console.log('[hiring] job started:', jobId, input);
@@ -25,7 +27,16 @@ export async function orchestrateHiringJob(jobId: string, input: JobInput): Prom
     const questions = await screeningQuestionsStep(input.role, { position: marketData.position }, jdContent);
     await updateJobData(jobId, { screening_questions: questions });
 
-    // 4. Done
+    // 4. Draft NDA
+    console.log('[hiring] drafting NDA');
+    const ndaContent = await draftNDAStep(input.role, input.business_type);
+    await updateJobData(jobId, { nda_content: ndaContent });
+
+    // 5. Find Candidates via Serper
+    console.log('[hiring] finding candidates via Serper');
+    await findCandidatesStep(input.role, input.location, jobId);
+
+    // 6. Done
     console.log('[hiring] job done:', jobId);
     await updateJobStatus(jobId, 'done');
 
