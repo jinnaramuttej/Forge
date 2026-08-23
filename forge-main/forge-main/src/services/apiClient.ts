@@ -25,7 +25,7 @@ export const apiClient = {
   },
 
   // --- Legal ---
-  generateLegalDocument: async (params: { document_type: string; business_id: string; details: any }) => {
+  generateLegalDocument: async (params: { document_type: string; purpose?: string; party_name?: string; location?: string }) => {
     const res = await fetch(`${API_BASE}/legal/generate`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
