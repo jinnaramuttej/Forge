@@ -124,7 +124,7 @@ export default function LegalReviewModal({
               <textarea
                 value={signatureNote}
                 onChange={(e) => setSignatureNote(e.target.value)}
-                placeholder="e.g. Countersigned on behalf of Acme Inc. under standard Delaware law provisions..."
+                placeholder="e.g. Countersigned on behalf of Forge under standard Delaware law provisions..."
                 rows={2}
                 className="w-full rounded-xl border border-border bg-surface px-3.5 py-2.5 text-xs text-foreground placeholder:text-foreground-faint focus:border-[var(--color-legal)] focus:outline-none"
               />
@@ -182,3 +182,4 @@ export default function LegalReviewModal({
     </AnimatePresence>
   );
 }
+

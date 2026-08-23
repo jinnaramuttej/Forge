@@ -25,7 +25,7 @@ const defaultFounder: FounderProfile = {
 };
 
 const defaultStartup: StartupInfo = {
-  name: 'Acme Inc.',
+  name: 'Forge',
   industry: 'Enterprise Software & Autonomous Ops',
   stage: 'Seed Stage ($2.4M Raised)',
   website: 'https://acme.build',
@@ -286,3 +286,4 @@ export default function ProfileView() {
     </div>
   );
 }
+

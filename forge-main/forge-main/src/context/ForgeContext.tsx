@@ -21,7 +21,7 @@ const initialFounder: FounderProfile = {
 };
 
 const initialStartup: StartupInfo = {
-  name: 'Acme Inc.',
+  name: 'Forge',
   industry: 'Enterprise Software & Autonomous Ops',
   stage: 'Seed Stage ($2.4M Raised)',
   website: 'https://acme.build',
@@ -168,11 +168,11 @@ const initialLegalDocuments: LegalDocument[] = [
     clauses: [
       {
         title: 'Definition of Confidential Information',
-        content: 'All proprietary software architectures, design systems, and product roadmaps disclosed by Acme Inc.',
+        content: 'All proprietary software architectures, design systems, and product roadmaps disclosed by Forge',
       },
       {
         title: 'Intellectual Property Assignment',
-        content: 'All deliverables created under this engagement constitute work-for-hire and belong 100% to Acme Inc.',
+        content: 'All deliverables created under this engagement constitute work-for-hire and belong 100% to Forge',
       },
       {
         title: 'Term & Survival',
@@ -312,7 +312,7 @@ const initialApprovals: ApprovalItem[] = [
         'FORGE Legal Agent compiled the standard mutual NDA using Delaware corporate bylaws. Counterparty identity verified via secretary of state records.',
       highlights: [
         'Automatic trade secret protection across software architectures and roadmap assets.',
-        'Explicit 100% intellectual property assignment to Acme Inc.',
+        'Explicit 100% intellectual property assignment to Forge',
         'Clean Delaware jurisdiction with standard 24-month term.',
       ],
       confidenceScore: '99.4%',
@@ -326,13 +326,13 @@ const initialApprovals: ApprovalItem[] = [
       type: 'document',
       heading: 'Contract Clauses Preview (Bilateral Mutual NDA)',
       body: `1. CONFIDENTIAL INFORMATION & PURPOSE
-"Confidential Information" encompasses all technical designs, Figma token schemas, backend interfaces, and business strategies disclosed by Acme Inc. to Studio Monochrome LLC solely for evaluating and executing the design systems contract.
+"Confidential Information" encompasses all technical designs, Figma token schemas, backend interfaces, and business strategies disclosed by Forge to Studio Monochrome LLC solely for evaluating and executing the design systems contract.
 
 2. OBLIGATIONS OF NON-DISCLOSURE
 The Receiving Party shall exercise reasonable standard of care to protect Confidential Information and shall not disclose such information to any third party without prior written authorization from Sarah Lin (CEO).
 
 3. INTELLECTUAL PROPERTY ASSIGNMENT
-All deliverables developed during the engagement shall remain the sole property of Acme Inc. under work-for-hire doctrine.`,
+All deliverables developed during the engagement shall remain the sole property of Forge under work-for-hire doctrine.`,
       tags: ['Delaware Law', 'Work-for-Hire', '24M Term', 'Bilateral'],
     },
     metadata: [
@@ -1189,3 +1189,4 @@ export const useForge = (): ForgeContextType => {
   }
   return context;
 };
+

@@ -228,7 +228,7 @@ export default function SettingsView({ onLogout }: SettingsViewProps) {
                   Workspace Configuration
                 </h2>
                 <p className="text-xs text-foreground-soft mt-0.5">
-                  Update primary parameters for Acme Inc.
+                  Update primary parameters for Forge
                 </p>
               </div>
 
@@ -596,3 +596,4 @@ export default function SettingsView({ onLogout }: SettingsViewProps) {
     </div>
   );
 }
+

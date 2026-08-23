@@ -33,7 +33,7 @@ const initialApprovalItems: ApprovalItem[] = [
         'FORGE Legal Agent compiled the standard mutual NDA using Delaware corporate bylaws. Counterparty identity verified via secretary of state records. All non-solicitation parameters calibrated to early-stage contractor standards.',
       highlights: [
         'Automatic trade secret protection across software architectures and roadmap assets.',
-        'Explicit 100% intellectual property assignment to Acme Inc.',
+        'Explicit 100% intellectual property assignment to Forge',
         'Clean Delaware jurisdiction with standard 24-month term.',
       ],
       confidenceScore: '99.4%',
@@ -47,13 +47,13 @@ const initialApprovalItems: ApprovalItem[] = [
       type: 'document',
       heading: 'Contract Clauses Preview (Bilateral Mutual NDA)',
       body: `1. CONFIDENTIAL INFORMATION & PURPOSE
-"Confidential Information" encompasses all technical designs, Figma token schemas, backend interfaces, and business strategies disclosed by Acme Inc. to Studio Monochrome LLC solely for evaluating and executing the design systems contract.
+"Confidential Information" encompasses all technical designs, Figma token schemas, backend interfaces, and business strategies disclosed by Forge to Studio Monochrome LLC solely for evaluating and executing the design systems contract.
 
 2. OBLIGATIONS OF NON-DISCLOSURE
 The Receiving Party shall exercise reasonable standard of care to protect Confidential Information and shall not disclose such information to any third party without prior written authorization from Sarah Lin (CEO).
 
 3. INTELLECTUAL PROPERTY ASSIGNMENT
-All deliverables, including typography tokens, layout specifications, and icon systems developed during the engagement shall remain the sole and exclusive property of Acme Inc. under work-for-hire doctrine.
+All deliverables, including typography tokens, layout specifications, and icon systems developed during the engagement shall remain the sole and exclusive property of Forge under work-for-hire doctrine.
 
 4. GOVERNING LAW & TERM
 This Agreement is governed by the laws of the State of Delaware. Obligations survive for a duration of twenty-four (24) months from execution date.`,
@@ -333,3 +333,4 @@ export default function ApprovalsView() {
     </div>
   );
 }
+

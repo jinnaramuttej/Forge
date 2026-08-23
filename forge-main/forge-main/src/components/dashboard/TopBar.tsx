@@ -25,9 +25,9 @@ interface TopBarProps {
 }
 
 const navTitles: Record<DashboardNavId, { title: string; breadcrumb: string }> = {
-  overview: { title: 'Overview', breadcrumb: 'Acme Inc.' },
+  overview: { title: 'Overview', breadcrumb: 'Forge' },
   command: { title: 'Command OS', breadcrumb: 'Executive Surface' },
-  finance: { title: 'Finance', breadcrumb: 'Acme Inc.' },
+  finance: { title: 'Finance', breadcrumb: 'Forge' },
   hiring: { title: 'Hiring Pipeline', breadcrumb: 'Talent' },
   legal: { title: 'Legal & Compliance', breadcrumb: 'Corporate' },
   marketing: { title: 'Marketing', breadcrumb: 'Growth' },
@@ -230,3 +230,4 @@ export default function TopBar({
     </header>
   );
 }
+

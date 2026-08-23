@@ -60,7 +60,7 @@ const initialDocuments: LegalDocument[] = [
       },
       {
         title: 'Intellectual Property Assignment',
-        content: 'All developed assets, code, and documentation constitute work-for-hire and assign 100% ownership to Acme Inc.',
+        content: 'All developed assets, code, and documentation constitute work-for-hire and assign 100% ownership to Forge',
       },
       {
         title: 'Invoicing & Compensation',
@@ -374,3 +374,4 @@ export default function LegalView() {
     </div>
   );
 }
+

@@ -149,7 +149,7 @@ export default function ProductPreview({ onEnterForge }: ProductPreviewProps = {
                       A
                     </span>
                     <span className="text-[0.8rem] text-foreground-soft">
-                      Acme Inc.
+                      Forge
                     </span>
                   </div>
                 </div>
@@ -400,3 +400,4 @@ export default function ProductPreview({ onEnterForge }: ProductPreviewProps = {
     </section>
   );
 }
+
