@@ -24,6 +24,12 @@ export const apiClient = {
     return res.json();
   },
 
+  getCandidates: async () => {
+    const res = await fetch(`${API_BASE}/candidates`);
+    if (!res.ok) throw new Error('Failed to fetch candidates');
+    return res.json();
+  },
+
   // --- Legal ---
   generateLegalDocument: async (params: { document_type: string; purpose?: string; party_name?: string; location?: string }) => {
     const res = await fetch(`${API_BASE}/legal/generate`, {

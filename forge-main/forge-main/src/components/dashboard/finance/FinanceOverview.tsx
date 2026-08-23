@@ -8,10 +8,10 @@ interface FinanceOverviewProps {
 }
 
 export default function FinanceOverview({
-  cash = '$284.5K',
-  monthlyBurn = '$19.2K',
+  cash = '₹284.5K',
+  monthlyBurn = '₹19.2K',
   runway = '14.8 months',
-  monthlyRevenue = '$42.8K',
+  monthlyRevenue = '₹42.8K',
 }: Partial<FinanceOverviewProps>) {
   const metrics = [
     {

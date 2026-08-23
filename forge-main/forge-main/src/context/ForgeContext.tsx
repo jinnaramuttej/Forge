@@ -644,7 +644,7 @@ export const ForgeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [startup, setStartup] = useState<StartupInfo>(initialStartup);
   const [finance, setFinance] = useState<FinanceData>(initialFinance);
   const [roles, setRoles] = useState<Role[]>(initialRoles);
-  const [candidates, setCandidates] = useState<Candidate[]>(initialCandidates);
+  const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [legalDocuments, setLegalDocuments] = useState<LegalDocument[]>(initialLegalDocuments);
   const [campaigns, setCampaigns] = useState<Campaign[]>(initialCampaigns);
   const [contentDrafts, setContentDrafts] = useState<ContentDraft[]>(initialContentDrafts);
@@ -659,10 +659,11 @@ export const ForgeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   useEffect(() => {
     async function fetchInitialData() {
       try {
-        const [jobsRes, docsRes, financeRes] = await Promise.allSettled([
+        const [jobsRes, docsRes, financeRes, candidatesRes] = await Promise.allSettled([
           apiClient.getHiringJobs(),
           apiClient.getLegalDocuments(),
-          apiClient.getFinanceSummary()
+          apiClient.getFinanceSummary(),
+          apiClient.getCandidates()
         ]);
 
         let dynamicApprovals: ApprovalItem[] = [];
@@ -778,13 +779,33 @@ export const ForgeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         if (financeRes.status === 'fulfilled' && financeRes.value) {
           const data = financeRes.value;
           setFinance({
-            cash: data.netCashFlow ? `$${(data.netCashFlow / 1000).toFixed(1)}K` : '$284.5K',
-            monthlyBurn: data.averageMonthlyExpenses ? `$${(data.averageMonthlyExpenses / 1000).toFixed(1)}K` : '$19.2K',
+            cash: data.netCashFlow ? `₹${(data.netCashFlow / 1000).toFixed(1)}K` : '₹284.5K',
+            monthlyBurn: data.averageMonthlyExpenses ? `₹${(data.averageMonthlyExpenses / 1000).toFixed(1)}K` : '₹19.2K',
             runway: `${(data.runwayMonths || 14.8).toFixed(1)} months`,
-            monthlyRevenue: data.totalSubtotalRevenue ? `$${(data.totalSubtotalRevenue / 1000).toFixed(1)}K` : '$42.8K',
-            netBurn: data.monthlyGrossBurnRate ? `$${(data.monthlyGrossBurnRate / 1000).toFixed(1)}K / mo` : '$34.2K / mo',
+            monthlyRevenue: data.totalSubtotalRevenue ? `₹${(data.totalSubtotalRevenue / 1000).toFixed(1)}K` : '₹42.8K',
+            netBurn: data.monthlyGrossBurnRate ? `₹${(data.monthlyGrossBurnRate / 1000).toFixed(1)}K / mo` : '₹34.2K / mo',
             runwayMonths: data.runwayMonths || 14.8,
           });
+        }
+
+        if (candidatesRes.status === 'fulfilled') {
+          const fetchedCandidates: Candidate[] = candidatesRes.value.map((cand: any) => ({
+            id: cand.id,
+            name: cand.name,
+            roleId: cand.role_id,
+            roleTitle: cand.role_title,
+            stage: cand.stage as CandidateStage,
+            experience: cand.experience,
+            skills: cand.skills || [],
+            matchScore: cand.match_score,
+            matchReason: cand.match_reason,
+            lastActivity: cand.last_activity,
+            rating: cand.rating,
+            currentCompany: cand.current_company,
+            education: cand.education,
+            notes: cand.notes,
+          }));
+          setCandidates(fetchedCandidates);
         }
 
         if (dynamicApprovals.length > 0) setApprovals(prev => [...dynamicApprovals, ...prev]);
