@@ -37,7 +37,7 @@ const ROLE_ARCHETYPES: RoleArchetype[] = [
     id: 'frontend',
     title: 'Founding Frontend Engineer',
     department: 'Engineering',
-    baseSalaryRange: '$140k – $165k',
+    baseSalaryRange: '₹18L – ₹25L',
     equityRange: '0.75% – 1.25%',
     monthlyBurnImpact: 12500,
     tags: ['React 19', 'TypeScript', 'Design Systems', 'Performance'],
@@ -46,7 +46,7 @@ const ROLE_ARCHETYPES: RoleArchetype[] = [
     id: 'product-design',
     title: 'Lead Product Designer',
     department: 'Design',
-    baseSalaryRange: '$130k – $155k',
+    baseSalaryRange: '₹15L – ₹22L',
     equityRange: '0.50% – 1.00%',
     monthlyBurnImpact: 11800,
     tags: ['Figma Masters', 'Prototyping', 'Design Tokens', 'User Research'],
@@ -55,7 +55,7 @@ const ROLE_ARCHETYPES: RoleArchetype[] = [
     id: 'growth',
     title: 'Head of Growth & Acquisition',
     department: 'Growth',
-    baseSalaryRange: '$125k – $150k',
+    baseSalaryRange: '₹16L – ₹24L',
     equityRange: '0.50% – 0.90%',
     monthlyBurnImpact: 11000,
     tags: ['Paid Channels', 'Content Loops', 'Product Led Growth', 'Analytics'],
@@ -64,7 +64,7 @@ const ROLE_ARCHETYPES: RoleArchetype[] = [
     id: 'ai-infra',
     title: 'AI / Backend Systems Engineer',
     department: 'Engineering',
-    baseSalaryRange: '$155k – $180k',
+    baseSalaryRange: '₹22L – ₹30L',
     equityRange: '0.80% – 1.50%',
     monthlyBurnImpact: 14000,
     tags: ['Python/FastAPI', 'Vector DBs', 'Distributed Systems', 'LLM Ops'],
@@ -84,7 +84,7 @@ export default function CreateRoleModal({
   const [pipelineType, setPipelineType] = useState<'Fast-Track (3 Steps)' | 'Standard Loop (4 Steps)' | 'Executive (5 Steps)'>('Fast-Track (3 Steps)');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [activeTags, setActiveTags] = useState<string[]>(ROLE_ARCHETYPES[0].tags);
-  const [budget, setBudget] = useState('');
+  const [salaryRange, setSalaryRange] = useState<string>(ROLE_ARCHETYPES[0].baseSalaryRange);
   const [location, setLocation] = useState('Hyderabad');
   const [workMode, setWorkMode] = useState<'onsite' | 'remote' | 'hybrid'>('onsite');
   const [pollingStatus, setPollingStatus] = useState<string | null>(null);
@@ -97,6 +97,7 @@ export default function CreateRoleModal({
     setTitle(arch.title);
     setDepartment(arch.department);
     setActiveTags(arch.tags);
+    setSalaryRange(arch.baseSalaryRange);
   };
 
   const toggleTag = (tag: string) => {
@@ -115,7 +116,7 @@ export default function CreateRoleModal({
       const { job_id } = await apiClient.generateHiringJob({
         role: title.trim(),
         business_type: department,
-        budget: budget.trim() || '0',
+        budget: salaryRange,
         location: location.trim(),
         work_mode: workMode,
       });
@@ -312,15 +313,21 @@ export default function CreateRoleModal({
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
                 <label className="block text-xs font-medium text-foreground-soft mb-1.5">
-                  Budget (INR)
+                  Salary Range
                 </label>
-                <input
-                  type="text"
-                  value={budget}
-                  onChange={(e) => setBudget(e.target.value)}
+                <select
+                  value={salaryRange}
+                  onChange={(e) => setSalaryRange(e.target.value)}
                   className="w-full rounded-xl border border-border bg-surface px-3.5 py-2.5 text-xs text-foreground focus:border-[var(--color-hiring)] focus:outline-none"
-                  placeholder="e.g. 1500000"
-                />
+                >
+                  <option value={selectedArchetype.baseSalaryRange}>
+                    {selectedArchetype.baseSalaryRange} (General Benchmark)
+                  </option>
+                  <option value="₹12L – ₹18L">₹12L – ₹18L (Mid Level)</option>
+                  <option value="₹18L – ₹25L">₹18L – ₹25L (Founding / Senior)</option>
+                  <option value="₹25L – ₹35L">₹25L – ₹35L (Lead / Staff)</option>
+                  <option value="₹35L – ₹50L">₹35L – ₹50L (Executive / Director)</option>
+                </select>
               </div>
               <div>
                 <label className="block text-xs font-medium text-foreground-soft mb-1.5">
